@@ -14,7 +14,7 @@ const Dashboard = () => {
           const checkAuth = async () => {
               try {
                   const res = await axios.get("http://localhost:5000/api/v1/admin/users/my/info", { withCredentials: true });
-                  if (res.data.user.role === "Team Leader") {
+                  if (res.data.user.role === "Team Leader" || res.data.user.superRole === "Admin") {
                       setIsAdmin(true);
                       setName(res.data.user.name);
                   } else {
