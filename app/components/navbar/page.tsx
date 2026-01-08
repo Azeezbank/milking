@@ -1,6 +1,5 @@
-
+"use client";
 import { Grip } from "lucide-react";
-import { useState } from "react";
 
 interface Menu {
   isMenu: boolean;

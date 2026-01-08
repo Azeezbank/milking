@@ -1,4 +1,4 @@
-
+"use client";
 import { Pointer, X, Activity, CalendarDays, Clock2, BarChart2, Bell } from "lucide-react";
 import Link from "next/link";
 
