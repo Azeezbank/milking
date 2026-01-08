@@ -120,7 +120,7 @@ const AdminAttendance = () => {
                         </span>
                       </td>
                       <td className="px-3 py-2 text-center">
-                        <Link href={`/admin/attendance/edit/${record.User.id}`}>
+                        <Link href={`/admin/attendance/edit/${record.User.id}/${record.id}`}>
                         <button className="bg-sky-500 text-white px-2 py-1 rounded text-sm flex items-center gap-1 hover:bg-sky-600 transition">
                           <Edit size={14} /> Edit
                         </button>

@@ -20,6 +20,7 @@ const AdminEditAttendance = () => {
   const [loading, setLoading] = useState(false);
 
    const id = params.userid;
+   const pid = params.id;
   
 
   // Fetch record (placeholder)
@@ -49,7 +50,7 @@ const AdminEditAttendance = () => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      await axios.put(`http://localhost:5000/api/v1/admin/attendance/${id}`, { status }, { withCredentials: true });
+      await axios.put(`http://localhost:5000/api/v1/admin/attendance/${pid}`, { status }, { withCredentials: true });
       alert("Attendance status updated successfully!");
       router.push("/admin/attendance");
     } catch (err) {
