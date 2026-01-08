@@ -16,7 +16,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/v1/protected', { withCredentials: true });
+                const res = await axios.get('https://milkingapi.onrender.com/api/v1/protected', { withCredentials: true });
                 if (res.status === 200) {
                     console.log('Authenticated');
                 }
@@ -32,7 +32,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/v1/admin/protected', { withCredentials: true });
+                const res = await axios.get('https://milkingapi.onrender.com/api/v1/admin/protected', { withCredentials: true });
                 if (res.status === 200) {
                     console.log('Authenticated');
                 }

@@ -23,7 +23,7 @@ const EditUserPage = () => {
   const fetchUser = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`http://localhost:5000/api/v1/admin/users/${id}`, { withCredentials: true });
+      const res = await axios.get(`https://milkingapi.onrender.com/api/v1/admin/users/${id}`, { withCredentials: true });
       setUser(res.data.user);
       setLoading(false);
     } catch (err) {
@@ -44,7 +44,7 @@ const EditUserPage = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      await axios.put(`http://localhost:5000/api/v1/admin/users/${id}`, user, { withCredentials: true });
+      await axios.put(`https://milkingapi.onrender.com/api/v1/admin/users/${id}`, user, { withCredentials: true });
       setLoading(false);
       alert("User updated successfully!");
       router.push("/admin/users");

@@ -21,7 +21,7 @@ const AdminAttendance = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/v1/admin/attendance?page=${page}&limit=${limit}&filter=${filter}${customDate ? `&date=${customDate}` : ""}`,
+        `https://milkingapi.onrender.com/api/v1/admin/attendance?page=${page}&limit=${limit}&filter=${filter}${customDate ? `&date=${customDate}` : ""}`,
         { withCredentials: true }
       );
 

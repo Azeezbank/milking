@@ -23,7 +23,7 @@ const UsersPage = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/v1/admin/users", { withCredentials: true });
+      const res = await axios.get("https://milkingapi.onrender.com/api/v1/admin/users", { withCredentials: true });
       setUsers(res.data.users);
       setLoading(false);
     } catch (err: any) {

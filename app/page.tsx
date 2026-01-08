@@ -23,7 +23,7 @@ export default function Home() {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:5000/api/v1/auth/register', { name, email, phone, username, password, confirmPassword }, { withCredentials: true });
+      const response = await axios.post('https://milkingapi.onrender.com/api/v1/auth/register', { name, email, phone, username, password, confirmPassword }, { withCredentials: true });
       if (response.status === 201) {
         setLoading(false);
         setIsAuthForm(true);
@@ -39,7 +39,7 @@ export default function Home() {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:5000/api/v1/auth/login', { identifier, password }, { withCredentials: true });
+      const response = await axios.post('https://milkingapi.onrender.com/api/v1/auth/login', { identifier, password }, { withCredentials: true });
       // if (response.status === 200) {
       router.push('/dashboard');
       setLoading(false);

@@ -16,7 +16,7 @@ export const AdminNavBar = ({ isMenu, setIsMenu }: AdminNavProps) => {
        useEffect(() => {
               const checkAuth = async () => {
                   try {
-                      const res = await axios.get("http://localhost:5000/api/v1/admin/users/my/info", { withCredentials: true });
+                      const res = await axios.get("https://milkingapi.onrender.com/api/v1/admin/users/my/info", { withCredentials: true });
                       if (res.data.user.role === "Team Leader" || res.data.user.superRole === "Admin") {
                           setName(res.data.user.name);
                           setRole(res.data.user.role);
