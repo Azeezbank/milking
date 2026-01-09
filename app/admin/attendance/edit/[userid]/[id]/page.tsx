@@ -7,6 +7,7 @@ import { UserCheck, UserX } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useParams } from "next/navigation";
 import Layout from "@/app/components/adminLayout/adminLayout";
+import backendUrl from "@/app/config";
 
 const AdminEditAttendance = () => {
   const router = useRouter();
@@ -29,7 +30,7 @@ const AdminEditAttendance = () => {
     const fetchRecord = async () => {
       try {
        
-        const response = await axios.get(`https://milkingapi.onrender.com/api/v1/admin/attendance/${id}`, { withCredentials: true });
+        const response = await axios.get(`${backendUrl}/api/v1/admin/attendance/${id}`, { withCredentials: true });
         const record = response.data.record;
 
         setUserName(record.User.name);
@@ -50,7 +51,7 @@ const AdminEditAttendance = () => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      await axios.put(`https://milkingapi.onrender.com/api/v1/admin/attendance/${pid}`, { status }, { withCredentials: true });
+      await axios.put(`${backendUrl}/api/v1/admin/attendance/${pid}`, { status }, { withCredentials: true });
       alert("Attendance status updated successfully!");
       router.push("/admin/attendance");
     } catch (err) {

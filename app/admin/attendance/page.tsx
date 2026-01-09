@@ -6,6 +6,7 @@ import axios from "axios";
 import { CalendarDays, Clock2, ArrowUpNarrowWide, TrendingUp, Edit } from "lucide-react";
 import Link from "next/link";
 import Layout from "../../components/adminLayout/adminLayout";
+import backendUrl from "@/app/config";
 
 const AdminAttendance = () => {
   const [attendanceRecords, setAttendanceRecords] = useState<any[]>([]);
@@ -21,7 +22,7 @@ const AdminAttendance = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://milkingapi.onrender.com/api/v1/admin/attendance?page=${page}&limit=${limit}&filter=${filter}${customDate ? `&date=${customDate}` : ""}`,
+        `${backendUrl}/api/v1/admin/attendance?page=${page}&limit=${limit}&filter=${filter}${customDate ? `&date=${customDate}` : ""}`,
         { withCredentials: true }
       );
 

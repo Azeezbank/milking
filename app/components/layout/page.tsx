@@ -7,6 +7,7 @@ import { ReactNode } from "react";
 import Footer from "../footer/footer";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import backendUrl from "@/app/config";
 
 
 export const Layout = ({ children }: { children: ReactNode }) => {
@@ -16,7 +17,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const res = await axios.get('https://milkingapi.onrender.com/api/v1/protected', { withCredentials: true });
+                const res = await axios.get(`${backendUrl}/api/v1/protected`, { withCredentials: true });
                 if (res.status === 200) {
                     console.log('Authenticated');
                 }

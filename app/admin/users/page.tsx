@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import Layout from "@/app/components/adminLayout/adminLayout";
+import backendUrl from "@/app/config";
 
 interface User {
   id: string;
@@ -23,7 +24,7 @@ const UsersPage = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("https://milkingapi.onrender.com/api/v1/admin/users", { withCredentials: true });
+      const res = await axios.get(`${backendUrl}/api/v1/admin/users`, { withCredentials: true });
       setUsers(res.data.users);
       setLoading(false);
     } catch (err: any) {

@@ -5,6 +5,7 @@ import { LoadingModal } from "../components/modal/page";
 import axios from "axios";
 import Layout from "../components/layout/page";
 import { ArrowUpNarrowWide, CalendarDays, Clock2, TrendingUp } from "lucide-react";
+import backendUrl from "@/app/config";
 
 export const Attendance = () => {
     const [status, setStatus] = useState("Present");
@@ -20,9 +21,9 @@ export const Attendance = () => {
     const handleSubmit = async () => {
         try {
             setLoading(true);
-            await axios.post(
-                "https://milkingapi.onrender.com/api/v1/attendance",
-                { status, date },
+            await axios.put(
+                `${backendUrl}/api/v1/attendance`,
+                { status },
                 { withCredentials: true }
             );
             alert("Attendance marked successfully");
@@ -39,7 +40,7 @@ export const Attendance = () => {
         try {
             setLoading(true);
             const response = await axios.get(
-                `https://milkingapi.onrender.com/api/v1/attendance?page=${page}&limit=${limit}`,
+                `${backendUrl}/api/v1/attendance?page=${page}&limit=${limit}`,
                 { withCredentials: true }
             );
             setAttendanceRecords(response.data.attendances);

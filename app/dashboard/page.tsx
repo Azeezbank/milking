@@ -5,6 +5,7 @@ import { Megaphone, LoaderCircle, Milk, Users, Calendar, PlaneTakeoff } from "lu
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import backendUrl from "@/app/config";
 
 const Dashboard = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -13,7 +14,7 @@ const Dashboard = () => {
    useEffect(() => {
           const checkAuth = async () => {
               try {
-                  const res = await axios.get("https://milkingapi.onrender.com/api/v1/admin/users/my/info", { withCredentials: true });
+                  const res = await axios.get(`${backendUrl}/api/v1/admin/users/my/info`, { withCredentials: true });
                   if (res.data.user.role === "Team Leader" || res.data.user.superRole === "Admin") {
                       setIsAdmin(true);
                       setName(res.data.user.name);
