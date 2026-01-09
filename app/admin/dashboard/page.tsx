@@ -9,10 +9,27 @@ import {
   TrendingUp,
 } from "lucide-react";
 import Layout from "../../components/adminLayout/adminLayout";
+import backendUrl from "@/app/config";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 
 
 export default function AdminDashboard() {
+  const [totalUsers, setTotalUsers] = useState(0);
+
+   useEffect(() => {
+          const checkAuth = async () => {
+              try {
+                  const res = await axios.get(`${backendUrl}/api/v1/admin/users/my/info`, { withCredentials: true });
+                      setTotalUsers(res.data.totalUser);
+              } catch (err: any) {
+                 console.error(err);
+              }
+          };
+          checkAuth();
+      }, []);
+
   return (
     <Layout>
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -38,7 +55,7 @@ export default function AdminDashboard() {
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         <StatCard
           title="Total Team Members"
-          value="12"
+          value={totalUsers.toString()}
           icon={<Users />}
           color="sky"
         />

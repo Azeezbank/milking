@@ -10,6 +10,7 @@ import backendUrl from "@/app/config";
 const Dashboard = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [name, setName] = useState("");
+  const [totalUsers, setTotalUsers] = useState(0);
 
    useEffect(() => {
           const checkAuth = async () => {
@@ -18,6 +19,7 @@ const Dashboard = () => {
                   if (res.data.user.role === "Team Leader" || res.data.user.superRole === "Admin") {
                       setIsAdmin(true);
                       setName(res.data.user.name);
+                      setTotalUsers(res.data.totalUser);
                   } else {
                       setIsAdmin(false);
                   }
@@ -78,7 +80,7 @@ const Dashboard = () => {
               <Users className="text-sky-500" />
               <p className="text-sm text-gray-500">Active Staff</p>
             </div>
-            <h3 className="text-2xl font-bold text-gray-800 mt-2">12</h3>
+            <h3 className="text-2xl font-bold text-gray-800 mt-2">{totalUsers}</h3>
           </div>
 
           <div className="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition">
