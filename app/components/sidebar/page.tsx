@@ -1,5 +1,5 @@
 "use client";
-import { Pointer, X, Activity, CalendarDays, Clock2, BarChart2, Bell } from "lucide-react";
+import { Pointer, X, Activity, CalendarCheck, ClipboardList, BarChart2, Bell, Clock, FileText, CalendarClock } from "lucide-react";
 import Link from "next/link";
 
 interface Menu {
@@ -10,7 +10,7 @@ interface Menu {
 export const Sidebar = ({ isMenu, setIsMenu }: Menu) => {
   return (
     <div
-      className={`px-5 w-60 bg-gray-50 h-screen overflow-y-auto transition-transform duration-700 ease-in-out shadow-lg ${
+      className={`px-5 w-60 fixed left-0 top-0 bg-gray-50 h-screen overflow-y-auto transition-transform duration-700 ease-in-out shadow-lg ${
         isMenu ? "translate-x-0" : "-translate-x-60"
       }`}
     >
@@ -30,11 +30,13 @@ export const Sidebar = ({ isMenu, setIsMenu }: Menu) => {
 
         {/* Links */}
         <SidebarLink href="/dashboard" icon={<Pointer size={15} className="rotate-90" />} label="My Dashboard" />
-        <SidebarLink href="/attendance" icon={<CalendarDays size={15} />} label="My Attendance" />
-        <SidebarLink href="#" icon={<Clock2 size={15} />} label="My Overtime" />
+        <SidebarLink href="/attendance" icon={<CalendarCheck size={15} />} label="My Attendance" />
+        <SidebarLink href="/milkrecord/manage" icon={<ClipboardList size={15} />} label="Manage Milk Records" />
+        <SidebarLink href="/milkrecord/view" icon={<Activity size={15} />} label="View Milk Records" />
+        <SidebarLink href="#" icon={<Clock size={15} />} label="My Overtime" />
         <SidebarLink href="#" icon={<BarChart2 size={15} />} label="Reports & Analytics" />
-        <SidebarLink href="#" icon={<Pointer size={15} className="rotate-90" />} label="Milk Records" />
-        <SidebarLink href="#" icon={<Pointer size={15} className="rotate-90" />} label="My Off Schedule" />
+        <SidebarLink href="#" icon={<FileText size={15} className="rotate-90" />} label="Milk Records" />
+        <SidebarLink href="#" icon={<CalendarClock size={15} className="rotate-90" />} label="My Off Schedule" />
         <SidebarLink href="#" icon={<Bell size={15} />} label="Notifications" />
       </div>
     </div>

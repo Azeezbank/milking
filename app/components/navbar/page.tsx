@@ -8,7 +8,7 @@ interface Menu {
 
 export const NavBar = ({ isMenu, setIsMenu }: Menu) => {
   return (
-    <header className="bg-gray-50 shadow-md">
+    <header className="bg-gray-50 shadow-md left-0 top-0 w-full ">
       <nav className="px-5">
         <div className="flex justify-between items-center py-2">
           {/* Logo & Branding */}
