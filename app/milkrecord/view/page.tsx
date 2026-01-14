@@ -100,9 +100,9 @@ export default function MilkRecordsPage() {
             setPage(1);
             fetchRecords();
           }}
-          className="bg-sky-600 text-white rounded-lg font-medium hover:bg-sky-700 transition"
+          className="bg-sky-600 text-white rounded-lg font-medium hover:bg-sky-700 transition py-1"
         >
-          Apply
+          Apply Filter
         </button>
       </div>
 

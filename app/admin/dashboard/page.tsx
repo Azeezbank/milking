@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 
 export default function AdminDashboard() {
   const [totalUsers, setTotalUsers] = useState(0);
+  const [totalMilk, setTotalMilk] = useState('')
 
    useEffect(() => {
           const checkAuth = async () => {
@@ -29,6 +30,29 @@ export default function AdminDashboard() {
           };
           checkAuth();
       }, []);
+
+      useEffect(() => {
+    const fetchMilkSummary = async () => {
+      try {
+        const today = new Date().toISOString();
+        const res = await axios.get(`${backendUrl}/api/v1/milk/record/summary`, {
+          params: {
+            date: today,
+          },
+          withCredentials: true,
+        });
+
+        const data = res.data;
+
+        setTotalMilk(data.totalMilk);
+
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchMilkSummary();
+  }, []);
 
   return (
     <Layout>
@@ -67,7 +91,7 @@ export default function AdminDashboard() {
         />
         <StatCard
           title="Milk Collected (Today)"
-          value="420 L"
+          value={`${totalMilk} L`}
           icon={<Milk />}
           color="amber"
         />

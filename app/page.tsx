@@ -253,30 +253,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== TEAM ===== */}
-      <section className="bg-white py-20 px-6 md:px-20">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-sky-600 mb-10">🤝 Meet Our Team</h2>
-          <div className="grid md:grid-cols-3 gap-10">
-            {["Lead Milking Supervisor", "Hygiene & Quality Officer", "Milk Records Coordinator"].map(
-              (role, i) => (
-                <div key={i} className="shadow-lg rounded-3xl p-6">
-                  <img
-                    src="https://i.pravatar.cc/300"
-                    className="w-24 h-24 rounded-full mx-auto mb-4"
-                  />
-                  <p className="font-bold text-lg">{role}</p>
-                  <p className="text-gray-600 text-sm">
-                    Ensuring quality, discipline, and teamwork every milking session.
-                  </p>
-                </div>
-              )
-            )}
-          </div>
-        </div>
-      </section>
-
-
       {/* ================= MEET OUR TEAM ================= */}
       <section className="bg-sky-50 py-20 px-6 md:px-20">
         <div className="max-w-7xl mx-auto">
