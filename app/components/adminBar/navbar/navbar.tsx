@@ -39,7 +39,7 @@ export const AdminNavBar = ({ isMenu, setIsMenu }: AdminNavProps) => {
           <img
             src="https://www.sparkgist.com/wp-content/uploads/2022/05/CWAY-Group.jpeg"
             alt="logo"
-            className="border border-red-900 rounded-full w-12 h-12"
+            className="border border-red-500 rounded-full w-12 h-12"
           />
           <div className="flex flex-col">
             <h2 className="text-sky-500 font-bold">CWAY Admin Portal</h2>

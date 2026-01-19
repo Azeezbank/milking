@@ -31,7 +31,7 @@ export const Sidebar = ({ isMenu, setIsMenu }: Menu) => {
 
   return (
     <div
-      className={`px-5 w-60 fixed left-0 top-0 bg-gray-50 h-screen overflow-y-auto transition-transform duration-700 ease-in-out shadow-lg ${
+      className={`px-5 w-60 fixed z-5 left-0 top-0 bg-gray-50 h-screen overflow-y-auto transition-transform duration-700 ease-in-out shadow-lg ${
         isMenu ? "translate-x-0" : "-translate-x-60"
       }`}
     >
@@ -57,7 +57,7 @@ export const Sidebar = ({ isMenu, setIsMenu }: Menu) => {
         <SidebarLink href="#" icon={<Clock size={15} />} label="My Overtime" />
         <SidebarLink href="#" icon={<BarChart2 size={15} />} label="Reports & Analytics" />
         <SidebarLink href="#" icon={<FileText size={15} className="rotate-90" />} label="Milk Records" />
-        <SidebarLink href="#" icon={<CalendarClock size={15} className="rotate-90" />} label="My Off Schedule" />
+        <SidebarLink href="/daysoff" icon={<CalendarClock size={15} className="rotate-90" />} label="My Off Schedule" />
         <SidebarLink href="#" icon={<Bell size={15} />} label="Notifications" />
       </div>
     </div>

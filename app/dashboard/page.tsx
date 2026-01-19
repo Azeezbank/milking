@@ -103,11 +103,6 @@ const Dashboard = () => {
           animalMap[r.animalTag].total += Number(r.quantity);
           animalMap[r.animalTag].count += 1;
         });
-        // const animals = Object.entries(animalMap)
-        //   .map(([animal, { total, count }]) => ({ animal, avg: total / count }))
-        //   .sort((a, b) => b.avg - a.avg)
-        //   .slice(0, 10);
-        // setTopAnimalsData(animals);
 
         const animals = Object.entries(animalMap)
           .map(([animal, { total }]) => ({

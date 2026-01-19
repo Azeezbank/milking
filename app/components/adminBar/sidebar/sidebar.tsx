@@ -1,5 +1,5 @@
 "use client";
-import { Pointer, X, Users, Calendar, FileText, Bell, Activity, User2 } from "lucide-react";
+import { Pointer, X, Users, Calendar, FileText, Bell, Activity, User2, CalendarClock, Barcode } from "lucide-react";
 import Link from "next/link";
 
 interface SidebarProps {
@@ -44,7 +44,7 @@ export const AdminSidebar = ({ isMenu, setIsMenu }: SidebarProps) => {
         <Link href="/admin/attendance">
           <div className="flex items-center gap-2 py-3 px-2 rounded hover:bg-sky-100 cursor-pointer">
             <Calendar size={15} className="text-sky-500" />
-            <span className="font-semibold text-sm">Attendance</span>
+            <span className="font-semibold text-sm">Manage Attendance</span>
           </div>
         </Link>
 
@@ -52,6 +52,13 @@ export const AdminSidebar = ({ isMenu, setIsMenu }: SidebarProps) => {
           <div className="flex items-center gap-2 py-3 px-2 rounded hover:bg-sky-100 cursor-pointer">
             <User2 size={15} className="text-sky-500" />
             <span className="font-semibold text-sm">Register Milking animal</span>
+          </div>
+        </Link>
+        
+        <Link href="/admin/workoff">
+          <div className="flex items-center gap-2 py-3 px-2 rounded hover:bg-sky-100 cursor-pointer">
+            <CalendarClock size={15} className="text-sky-500" />
+            <span className="font-semibold text-sm">Manage Off Schedule</span>
           </div>
         </Link>
 
@@ -70,8 +77,8 @@ export const AdminSidebar = ({ isMenu, setIsMenu }: SidebarProps) => {
         </Link>
 
         <Link href="/dashboard">
-          <div className="flex items-center gap-2 py-3 px-2 rounded hover:bg-sky-100 cursor-pointer">
-            <User2 size={15} className="text-sky-500" />
+          <div className="flex items-center bg-sky-500 text-white gap-2 py-3 px-2 rounded hover:bg-sky-600 cursor-pointer">
+            <Barcode size={15} className="text-white" />
             <span className="font-semibold text-sm">Main Dashboard</span>
           </div>
         </Link>

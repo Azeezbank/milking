@@ -4,7 +4,7 @@ import {
   Users,
   ClipboardCheck,
   Milk,
-  Clock,
+  CalendarClock,
   Bell,
   TrendingUp,
 } from "lucide-react";
@@ -18,20 +18,34 @@ import { useEffect, useState } from "react";
 export default function AdminDashboard() {
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalMilk, setTotalMilk] = useState('')
+  const [maxDays, setMaxDays] = useState(0);
+  const [present, setPresent] = useState(0);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await axios.get(`${backendUrl}/api/v1/admin/users/my/info`, { withCredentials: true });
+        setTotalUsers(res.data.totalUser);
+      } catch (err: any) {
+        console.error(err);
+      }
+    };
+    checkAuth();
+  }, []);
 
    useEffect(() => {
-          const checkAuth = async () => {
-              try {
-                  const res = await axios.get(`${backendUrl}/api/v1/admin/users/my/info`, { withCredentials: true });
-                      setTotalUsers(res.data.totalUser);
-              } catch (err: any) {
-                 console.error(err);
-              }
-          };
-          checkAuth();
-      }, []);
+    const checkPresent = async () => {
+      try {
+        const res = await axios.get(`${backendUrl}/api/v1/admin/attendance/present`, { withCredentials: true });
+        setPresent(res.data);
+      } catch (err: any) {
+        console.error(err);
+      }
+    };
+    checkPresent();
+  }, []);
 
-      useEffect(() => {
+  useEffect(() => {
     const fetchMilkSummary = async () => {
       try {
         const today = new Date().toISOString();
@@ -54,124 +68,137 @@ export default function AdminDashboard() {
     fetchMilkSummary();
   }, []);
 
+  useEffect(() => {
+    try {
+      const handleOffLimit = async () => {
+        const res = await axios.get(`${backendUrl}/api/v1/off/limit`, { withCredentials: true });
+        if (res.status === 200) {
+          setMaxDays(res.data.maxDays)
+        }
+      };
+      handleOffLimit();
+    } catch (err) {
+      console.error(err);
+    }
+  }, [])
+
   return (
     <Layout>
-    <div className="p-6 bg-gray-100 min-h-screen">
-      {/* ===== HEADER ===== */}
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">
-            Admin Dashboard
-          </h1>
-          <p className="text-gray-500 text-sm">
-            Overview of milking team activities and performance
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Bell className="text-sky-500 cursor-pointer" />
-          <div className="w-9 h-9 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold">
-            A
+      <div className="p-6 bg-gray-100 min-h-screen">
+        {/* ===== HEADER ===== */}
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">
+              Admin Dashboard
+            </h1>
+            <p className="text-gray-500 text-sm">
+              Overview of milking team activities and performance
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Bell className="text-sky-500 cursor-pointer" />
+            <div className="w-9 h-9 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold">
+              A
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* ===== STATS CARDS ===== */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <StatCard
-          title="Total Team Members"
-          value={totalUsers.toString()}
-          icon={<Users />}
-          color="sky"
-        />
-        <StatCard
-          title="Present Today"
-          value="9"
-          icon={<ClipboardCheck />}
-          color="green"
-        />
-        <StatCard
-          title="Milk Collected (Today)"
-          value={`${totalMilk} L`}
-          icon={<Milk />}
-          color="amber"
-        />
-        <StatCard
-          title="Overtime Hours"
-          value="6 hrs"
-          icon={<Clock />}
-          color="rose"
-        />
-      </div>
+        {/* ===== STATS CARDS ===== */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          <StatCard
+            title="Total Team Members"
+            value={totalUsers.toString()}
+            icon={<Users />}
+            color="sky"
+          />
+          <StatCard
+            title="Present Today"
+            value={`${present}`}
+            icon={<ClipboardCheck />}
+            color="green"
+          />
+          <StatCard
+            title="Milk Collected (Today)"
+            value={`${totalMilk} L`}
+            icon={<Milk />}
+            color="amber"
+          />
+          <StatCard
+            title="Month Off"
+            value={`${maxDays}`}
+            icon={<CalendarClock />}
+            color="rose"
+          />
+        </div>
 
-      {/* ===== MAIN CONTENT ===== */}
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* ===== RECENT ATTENDANCE ===== */}
-        <div className="lg:col-span-2 bg-white rounded-2xl shadow p-6">
-          <h3 className="font-bold text-lg mb-4 text-gray-800">
-            📋 Recent Attendance
-          </h3>
+        {/* ===== MAIN CONTENT ===== */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* ===== RECENT ATTENDANCE ===== */}
+          <div className="lg:col-span-2 bg-white rounded-2xl shadow p-6">
+            <h3 className="font-bold text-lg mb-4 text-gray-800">
+              📋 Recent Attendance
+            </h3>
 
-          <table className="w-full text-sm">
-            <thead className="text-left text-gray-500 border-b">
-              <tr>
-                <th className="pb-3">Name</th>
-                <th>Status</th>
-                <th>Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                { name: "Banky", status: "Present", time: "6:00 AM" },
-                { name: "Jimi", status: "Present", time: "6:05 AM" },
-                { name: "Idris", status: "Late", time: "6:30 AM" },
-                { name: "Logbon", status: "Absent", time: "-" },
-              ].map((item, index) => (
-                <tr key={index} className="border-b last:border-none">
-                  <td className="py-3 font-medium">{item.name}</td>
-                  <td
-                    className={`font-semibold ${
-                      item.status === "Present"
-                        ? "text-green-600"
-                        : item.status === "Late"
-                        ? "text-amber-600"
-                        : "text-rose-600"
-                    }`}
-                  >
-                    {item.status}
-                  </td>
-                  <td className="text-gray-500">{item.time}</td>
+            <table className="w-full text-sm">
+              <thead className="text-left text-gray-500 border-b">
+                <tr>
+                  <th className="pb-3">Name</th>
+                  <th>Status</th>
+                  <th>Time</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {[
+                  { name: "Banky", status: "Present", time: "6:00 AM" },
+                  { name: "Jimi", status: "Present", time: "6:05 AM" },
+                  { name: "Idris", status: "Late", time: "6:30 AM" },
+                  { name: "Logbon", status: "Absent", time: "-" },
+                ].map((item, index) => (
+                  <tr key={index} className="border-b last:border-none">
+                    <td className="py-3 font-medium">{item.name}</td>
+                    <td
+                      className={`font-semibold ${item.status === "Present"
+                          ? "text-green-600"
+                          : item.status === "Late"
+                            ? "text-amber-600"
+                            : "text-rose-600"
+                        }`}
+                    >
+                      {item.status}
+                    </td>
+                    <td className="text-gray-500">{item.time}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-        {/* ===== QUICK INSIGHTS ===== */}
-        <div className="bg-white rounded-2xl shadow p-6">
-          <h3 className="font-bold text-lg mb-4 text-gray-800">
-            📊 Quick Insights
-          </h3>
+          {/* ===== QUICK INSIGHTS ===== */}
+          <div className="bg-white rounded-2xl shadow p-6">
+            <h3 className="font-bold text-lg mb-4 text-gray-800">
+              📊 Quick Insights
+            </h3>
 
-          <div className="space-y-4">
-            <Insight
-              title="Milk Yield Trend"
-              value="+12% today"
-              icon={<TrendingUp />}
-            />
-            <Insight
-              title="Hygiene Reports"
-              value="No issues"
-              icon={<ClipboardCheck />}
-            />
-            <Insight
-              title="Pending Requests"
-              value="2"
-              icon={<Bell />}
-            />
+            <div className="space-y-4">
+              <Insight
+                title="Milk Yield Trend"
+                value="+12% today"
+                icon={<TrendingUp />}
+              />
+              <Insight
+                title="Hygiene Reports"
+                value="No issues"
+                icon={<ClipboardCheck />}
+              />
+              <Insight
+                title="Pending Requests"
+                value="2"
+                icon={<Bell />}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </Layout>
   );
 }
