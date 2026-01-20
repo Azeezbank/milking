@@ -15,6 +15,10 @@ interface MilkRow {
   recorder: string;
 }
 
+interface AnimalTag {
+  animalTag: string
+}
+
 export default function MilkRecordsPage() {
   const [records, setRecords] = useState<MilkRow[]>([]);
   const [totalMilk, setTotalMilk] = useState(0);
@@ -23,10 +27,29 @@ export default function MilkRecordsPage() {
   const [date, setDate] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const [animals, setAnimals] = useState<AnimalTag[]>([]);
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+
+
+   // Fetch animals
+    useEffect(() => {
+      const fetchAnimals = async () => {
+        try {
+          const res = await axios.get(
+            `${backendUrl}/api/v1/milk/record/animals`,
+            { withCredentials: true }
+          );
+          setAnimals(res.data.animals);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+  
+      fetchAnimals();
+    }, []);
 
   const fetchRecords = async () => {
     try {
@@ -69,13 +92,21 @@ export default function MilkRecordsPage() {
 
       {/* Filters */}
       <div className="bg-white rounded-xl shadow p-5 mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-        <input
+        {/* <input
           type="text"
           placeholder="Animal Tag"
           value={animalTag}
           onChange={(e) => setAnimalTag(e.target.value)}
           className="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500"
-        />
+        /> */}
+
+        <select className="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500"
+        onChange={(e) => setAnimalTag(e.target.value)}>
+          <option>Animal Tag</option>
+          {animals.map((tag, index) => (
+            <option key={index}>{tag.animalTag}</option>
+          ))}
+        </select>
 
         <select
           value={range}

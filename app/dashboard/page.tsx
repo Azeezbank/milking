@@ -34,6 +34,10 @@ interface MilkSession {
   recorder: string;
 }
 
+interface AnimalTag {
+  animalTag: string
+}
+
 const Dashboard = () => {
   // State
   const [userName, setUserName] = useState("");
@@ -45,10 +49,30 @@ const Dashboard = () => {
   const [avgPerAnimal, setAvgPerAnimal] = useState(0);
   const [filterRange, setFilterRange] = useState("day");
   const [animalFilter, setAnimalFilter] = useState("");
-  const [records, setRecords] = useState<MilkSession[]>([]);
+  // const [records, setRecords] = useState<MilkSession[]>([]);
   const [dailyTrendData, setDailyTrendData] = useState<{ date: string; total: number; }[]>([]);
   const [topAnimalsData, setTopAnimalsData] = useState<{ animal: string; total: number }[]>([]);
   const [sectionFilter, setSectionFilter] = useState("Today");
+  const [animals, setAnimals] = useState<AnimalTag[]>([])
+
+
+   // Fetch animals
+      useEffect(() => {
+        const fetchAnimals = async () => {
+          try {
+            const res = await axios.get(
+              `${backendUrl}/api/v1/milk/record/animals`,
+              { withCredentials: true }
+            );
+            setAnimals(res.data.animals);
+          } catch (err) {
+            console.error(err);
+          }
+        };
+    
+        fetchAnimals();
+      }, []);
+
 
   // Fetch user info
   useEffect(() => {
@@ -84,7 +108,7 @@ const Dashboard = () => {
 
         setTotalMilk(data.totalMilk);
         setPrevTotalMilk(Number(data.previousTotalMilk));
-        setRecords(data.records || []);
+        // setRecords(data.records || []);
         setAnimalsMilked(new Set(data.records.map((r: MilkSession) => r.animalTag)).size);
         setAvgPerAnimal(data.records.length ? data.totalMilk / new Set(data.records.map((r: MilkSession) => r.animalTag)).size : 0);
 
@@ -187,8 +211,8 @@ const Dashboard = () => {
             className="border rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-sky-500"
           >
             <option value="">All Animals</option>
-            {records.map((r) => (
-              <option key={r.animalTag} value={r.animalTag}>{r.animalTag}</option>
+            {animals.map((tag, index) => (
+              <option key={index}>{tag.animalTag}</option>
             ))}
           </select>
         </div>
