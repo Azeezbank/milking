@@ -53,10 +53,9 @@ export const Sidebar = ({ isMenu, setIsMenu }: Menu) => {
         <SidebarLink href="/dashboard" icon={<Pointer size={15} className="rotate-90" />} label="My Dashboard" />
         <SidebarLink href="/attendance" icon={<CalendarCheck size={15} />} label="My Attendance" />
         <div className={`${isPermisible ? 'block' : 'hidden'}`}><SidebarLink href="/milkrecord/manage" icon={<ClipboardList size={15} />} label="Manage Milk Records" /> </div>
-        <SidebarLink href="/milkrecord/view" icon={<Activity size={15} />} label="View Milk Records" />
+        <SidebarLink href="/milkrecord/view" icon={<FileText size={15} />} label="View Milk Records" />
         <SidebarLink href="#" icon={<Clock size={15} />} label="My Overtime" />
         <SidebarLink href="#" icon={<BarChart2 size={15} />} label="Reports & Analytics" />
-        <SidebarLink href="#" icon={<FileText size={15} className="rotate-90" />} label="Milk Records" />
         <SidebarLink href="/daysoff" icon={<CalendarClock size={15} className="rotate-90" />} label="My Off Schedule" />
         <SidebarLink href="#" icon={<Bell size={15} />} label="Notifications" />
       </div>
