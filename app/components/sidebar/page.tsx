@@ -19,7 +19,7 @@ export const Sidebar = ({ isMenu, setIsMenu }: Menu) => {
         try {
           const res = await axios.get(`${backendUrl}/api/v1/admin/users/my/info`, { withCredentials: true });
           const user = res.data.user;
-          if (user.role === "Team Leader" || user.role === "Deputy Team Leader" || user.role === "Operation Officer") {
+          if (user.role === "Team Leader" || user.role === "Operation Officer" || user.superRole === "Admin") {
             setIsPermisible(true)
           }
         } catch (err) {

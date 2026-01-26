@@ -19,6 +19,7 @@ const MilkRecordPage = () => {
   const [quantity, setQuantity] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [date, setDate] = useState("");
 
   // Fetch animals
   useEffect(() => {
@@ -61,11 +62,12 @@ const MilkRecordPage = () => {
           animalTag,
           period,
           quantity: Number(quantity),
+          date
         },
         { withCredentials: true }
       );
 
-      setMessage("✅ Milk record saved successfully");
+      setMessage("Milk record saved successfully");
       setQuantity("");
       setLoading(false);
     } catch (err: any) {
@@ -143,6 +145,19 @@ const MilkRecordPage = () => {
                 step="0.01"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
+                className="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 outline-0 focus:border-sky-500"
+                placeholder="e.g. 12.5"
+                required
+              />
+            </div>
+
+             {/* Date */}
+            <div>
+              <label className="text-sm text-gray-600">Date</label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
                 className="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 outline-0 focus:border-sky-500"
                 placeholder="e.g. 12.5"
                 required
