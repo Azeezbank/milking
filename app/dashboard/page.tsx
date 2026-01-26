@@ -55,6 +55,7 @@ const Dashboard = () => {
   const [topAnimalsData, setTopAnimalsData] = useState<{ animal: string; total: number }[]>([]);
   const [sectionFilter, setSectionFilter] = useState("Today");
   const [animals, setAnimals] = useState<AnimalTag[]>([]);
+  const [trendData, setTrendData] = useState<{ label: string; total: number }[]>([]);
 
   // Fetch animals
   useEffect(() => {
@@ -108,28 +109,45 @@ const Dashboard = () => {
         setPrevTotalMilk(Number(data.previousTotalMilk));
         setAvgMilkingDays(data.avgMilkingDays || 0);
         setFilteredAnimalStats(data.filteredAnimal || null);
+        setTrendData(
+          (data.trendData || []).sort((a: any, b: any) =>
+            a.label.localeCompare(b.label)
+          )
+        );
 
         setAnimalsMilked(new Set(data.records.map((r: MilkSession) => r.animalTag)).size);
         setAvgPerAnimal(data.records.length ? data.totalMilk / new Set(data.records.map((r: MilkSession) => r.animalTag)).size : 0);
 
         // Daily trend chart
-        const trendMap: Record<string, number> = {};
-        data.records.forEach((r: MilkSession) => {
-          const d = new Date(r.date).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-          trendMap[d] = (trendMap[d] || 0) + Number(r.quantity);
-        });
-        setDailyTrendData(Object.entries(trendMap).map(([date, total]) => ({ date, total })));
+        // const trendMap: Record<string, number> = {};
+        // data.records.forEach((r: MilkSession) => {
+        //   const d = new Date(r.date).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        //   trendMap[d] = (trendMap[d] || 0) + Number(r.quantity);
+        // });
+        // setDailyTrendData(Object.entries(trendMap).map(([date, total]) => ({ date, total })));
 
-        // Top animals
-        const animalMap: Record<string, { total: number; count: number }> = {};
-        data.records.forEach((r: MilkSession) => {
-          if (!animalMap[r.animalTag]) animalMap[r.animalTag] = { total: 0, count: 0 };
-          animalMap[r.animalTag].total += Number(r.quantity);
-          animalMap[r.animalTag].count += 1;
-        });
+        // // Top animals
+        // const animalMap: Record<string, { total: number; count: number }> = {};
+        // data.records.forEach((r: MilkSession) => {
+        //   if (!animalMap[r.animalTag]) animalMap[r.animalTag] = { total: 0, count: 0 };
+        //   animalMap[r.animalTag].total += Number(r.quantity);
+        //   animalMap[r.animalTag].count += 1;
+        // });
 
-        const animalsTop = Object.entries(animalMap)
-          .map(([animal, { total }]) => ({
+        // const animalsTop = Object.entries(animalMap)
+        //   .map(([animal, { total }]) => ({
+        //     animal,
+        //     total: Number(total.toFixed(2)),
+        //   }))
+        //   .sort((a, b) => b.total - a.total)
+        //   .slice(0, 10);
+
+        // setTopAnimalsData(animalsTop);
+
+        const animalMilkMap = data.animalMilkMap as Record<string, number>;
+
+        const animalsTop = Object.entries(animalMilkMap)
+          .map(([animal, total]) => ({
             animal,
             total: Number(total.toFixed(2)),
           }))
@@ -258,11 +276,11 @@ const Dashboard = () => {
 
           {/* DAILY TREND */}
           <div className="bg-white rounded-2xl p-5 shadow-sm">
-            <h3 className="font-semibold text-gray-700 mb-4">Daily Milk Trend</h3>
+            <h3 className="font-semibold text-gray-700 mb-4">Milk Trend</h3>
             <ResponsiveContainer width="100%" height={280}>
-              <LineChart data={dailyTrendData}>
+              <LineChart data={trendData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
+                <XAxis dataKey="label" />
                 <YAxis />
                 <Tooltip />
                 <Line type="monotone" dataKey="total" stroke="#0ea5e9" strokeWidth={3} dot={{ r: 4 }} />
