@@ -296,7 +296,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* ANNOUNCEMENTS */}
+        {/* ANNOUNCEMENT */}
         <div className="bg-white rounded-xl shadow-sm">
           <div className="flex items-center gap-2 border-b px-6 py-4">
             <Megaphone size={18} className="text-sky-500" />
