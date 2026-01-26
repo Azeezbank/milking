@@ -79,7 +79,7 @@ const Dashboard = () => {
         const res = await axios.get(`${backendUrl}/api/v1/admin/users/my/info`, { withCredentials: true });
         const user = res.data.user;
         setUserName(user.username);
-        setIsAdmin(user.role === "Team Leader" || user.role === "Deputy Team Leader" || user.superRole === "Admin");
+        setIsAdmin(user.role === "Team Leader" || user.superRole === "Admin");
         setTotalUsers(res.data.totalUser || 0);
       } catch {
         setIsAdmin(false);
