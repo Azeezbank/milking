@@ -2,8 +2,7 @@
 import { Pointer, X, Activity, CalendarCheck, ClipboardList, BarChart2, Bell, Clock, FileText, CalendarClock, FileText as ReportsIcon, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import backendUrl from "@/app/config";
-import axios from "axios";
+import api from "@/app/components/services/api";
 
 interface Menu {
   isMenu: boolean;
@@ -15,19 +14,29 @@ export const Sidebar = ({ isMenu, setIsMenu }: Menu) => {
 
   // Fetch user info
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const res = await axios.get(`${backendUrl}/api/v1/admin/users/my/info`, { withCredentials: true });
-        const user = res.data.user;
-        if (user.role === "Team Leader" || user.role === "Operation Officer" || user.superRole === "Admin") {
-          setIsPermisible(true);
-        }
-      } catch (err) {
+  const fetchUserInfo = async () => {
+    try {
+      const res = await api.get("/api/v1/admin/users/my/info");
+      const user = res.data.user;
+
+      // Check permission
+      if (
+        user.role === "Team Leader" ||
+        user.role === "Operation Officer" ||
+        user.superRole === "Admin"
+      ) {
+        setIsPermisible(true);
+      } else {
         setIsPermisible(false);
       }
-    };
-    fetchUserInfo();
-  }, []);
+    } catch (err) {
+      console.error("Failed to fetch user info:", err);
+      setIsPermisible(false); // fallback
+    }
+  };
+
+  fetchUserInfo();
+}, []);
 
   return (
     <div

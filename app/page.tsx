@@ -37,27 +37,60 @@ export default function Home() {
     }
   };
 
+  // const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   try {
+  //     setLoading(true);
+  //     const response = await axios.post(`${backendUrl}/api/v1/auth/login`, { identifier, password }, { withCredentials: true });
+  //     // if (response.status === 200) {
+  //     router.push('/dashboard');
+  //     setLoading(false);
+  //     // }
+  //   } catch (err: any) {
+  //     console.error(err);
+  //     // safer alert
+  //     if (err.response && err.response.data && err.response.data.message) {
+  //       alert(err.response.data.message);
+  //     } else {
+  //       alert("Login Failed");
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      const response = await axios.post(`${backendUrl}/api/v1/auth/login`, { identifier, password }, { withCredentials: true });
-      // if (response.status === 200) {
-      router.push('/dashboard');
-      setLoading(false);
-      // }
-    } catch (err: any) {
-      console.error(err);
-      // safer alert
-      if (err.response && err.response.data && err.response.data.message) {
-        alert(err.response.data.message);
-      } else {
-        alert("Login Failed");
-      }
-    } finally {
-      setLoading(false);
+  e.preventDefault();
+  try {
+    setLoading(true);
+
+    // Make login request
+    const response = await axios.post(`${backendUrl}/api/v1/auth/login`, {
+      identifier,
+      password,
+    });
+
+    // Extract token from backend response
+    const token = response.data.token; // make sure your backend sends { token: "...", user: {...} }
+    const user = response.data.user;   // optional
+
+    // Store token in localStorage
+    localStorage.setItem("token", token);
+    if (user) localStorage.setItem("user", JSON.stringify(user));
+
+    // Redirect to dashboard
+    router.push("/dashboard");
+  } catch (err: any) {
+    console.error(err);
+
+    if (err.response && err.response.data && err.response.data.message) {
+      alert(err.response.data.message);
+    } else {
+      alert("Login Failed");
     }
+  } finally {
+    setLoading(false);
   }
+};
 
 
   return (

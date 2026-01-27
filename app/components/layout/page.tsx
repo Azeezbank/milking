@@ -5,29 +5,38 @@ import { Sidebar } from "../sidebar/page";
 import { useEffect, useState } from "react";
 import { ReactNode } from "react";
 import Footer from "../footer/footer";
-import axios from "axios";
 import { useRouter } from "next/navigation";
-import backendUrl from "@/app/config";
+import api from "@/app/components/services/api";
 
 
 export const Layout = ({ children }: { children: ReactNode }) => {
 
     const router = useRouter();
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                const res = await axios.get(`${backendUrl}/api/v1/protected`, { withCredentials: true });
-                if (res.status === 200) {
-                    console.log('Authenticated');
-                }
-            } catch (err: any) {
-                router.push('/');
-            }
-        };
+ useEffect(() => {
+    const checkAuth = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        router.push("/"); // redirect if no token
+        return;
+      }
 
-        checkAuth();
-    }, []);
+      try {
+        const res = await api.get("/api/v1/protected"); // token sent automatically
+        if (res.status === 200) {
+          console.log("Authenticated");
+        }
+      } catch (err: any) {
+        console.log("Not authenticated", err);
+        // Remove invalid token
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        router.push("/"); // redirect to login
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
     const [isMenu, setIsMenu] = useState(false);
     return (

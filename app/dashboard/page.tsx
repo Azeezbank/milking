@@ -6,6 +6,7 @@ import axios from "axios";
 import backendUrl from "@/app/config";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import api from "@/app/components/services/api";
 import {
   Milk,
   Users,
@@ -57,51 +58,54 @@ const Dashboard = () => {
   const [animals, setAnimals] = useState<AnimalTag[]>([]);
   const [trendData, setTrendData] = useState<{ label: string; total: number }[]>([]);
 
+
   // Fetch animals
-  useEffect(() => {
-    const fetchAnimals = async () => {
-      try {
-        const res = await axios.get(
-          `${backendUrl}/api/v1/milk/record/animals`,
-          { withCredentials: true }
-        );
-        setAnimals(res.data.animals);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchAnimals();
-  }, []);
+useEffect(() => {
+  const fetchAnimals = async () => {
+    try {
+      const res = await api.get("/api/v1/milk/record/animals"); // token sent automatically
+      setAnimals(res.data.animals);
+    } catch (err: any) {
+      console.error("Failed to fetch animals:", err);
+    }
+  };
+
+  fetchAnimals();
+}, []);
+
 
   // Fetch user info
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const res = await axios.get(`${backendUrl}/api/v1/admin/users/my/info`, { withCredentials: true });
-        const user = res.data.user;
-        setUserName(user.username);
-        setIsAdmin(user.role === "Team Leader" || user.superRole === "Admin");
-        setTotalUsers(res.data.totalUser || 0);
-      } catch {
-        setIsAdmin(false);
-      }
-    };
-    fetchUserInfo();
-  }, []);
+useEffect(() => {
+  const fetchUserInfo = async () => {
+    try {
+      const res = await api.get("/api/v1/admin/users/my/info"); // token sent automatically
+      const user = res.data.user;
+
+      setUserName(user.username);
+      setIsAdmin(user.role === "Team Leader" || user.superRole === "Admin");
+      setTotalUsers(res.data.totalUser || 0);
+    } catch (err: any) {
+      console.error("Failed to fetch user info:", err);
+      setIsAdmin(false);
+    }
+  };
+
+  fetchUserInfo();
+}, []);
 
   // Fetch milk summary from backend
   useEffect(() => {
     const fetchMilkSummary = async () => {
       try {
         const today = new Date().toISOString();
-        const res = await axios.get(`${backendUrl}/api/v1/milk/record/summary`, {
-          params: {
-            range: filterRange,
-            date: today,
-            animalTag: animalFilter,
-          },
-          withCredentials: true,
-        });
+        
+        const res = await api.get("/api/v1/milk/record/summary", {
+        params: {
+          range: filterRange,
+          date: today,
+          animalTag: animalFilter,
+        },
+      });
 
         const data = res.data;
 
@@ -119,30 +123,6 @@ const Dashboard = () => {
         setAvgPerAnimal(data.records.length ? data.totalMilk / new Set(data.records.map((r: MilkSession) => r.animalTag)).size : 0);
 
         // Daily trend chart
-        // const trendMap: Record<string, number> = {};
-        // data.records.forEach((r: MilkSession) => {
-        //   const d = new Date(r.date).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-        //   trendMap[d] = (trendMap[d] || 0) + Number(r.quantity);
-        // });
-        // setDailyTrendData(Object.entries(trendMap).map(([date, total]) => ({ date, total })));
-
-        // // Top animals
-        // const animalMap: Record<string, { total: number; count: number }> = {};
-        // data.records.forEach((r: MilkSession) => {
-        //   if (!animalMap[r.animalTag]) animalMap[r.animalTag] = { total: 0, count: 0 };
-        //   animalMap[r.animalTag].total += Number(r.quantity);
-        //   animalMap[r.animalTag].count += 1;
-        // });
-
-        // const animalsTop = Object.entries(animalMap)
-        //   .map(([animal, { total }]) => ({
-        //     animal,
-        //     total: Number(total.toFixed(2)),
-        //   }))
-        //   .sort((a, b) => b.total - a.total)
-        //   .slice(0, 10);
-
-        // setTopAnimalsData(animalsTop);
 
         const animalMilkMap = data.animalMilkMap as Record<string, number>;
 
