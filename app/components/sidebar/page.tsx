@@ -1,5 +1,5 @@
 "use client";
-import { Pointer, X, Activity, CalendarCheck, ClipboardList, BarChart2, Bell, Clock, FileText, CalendarClock } from "lucide-react";
+import { Pointer, X, Activity, CalendarCheck, ClipboardList, BarChart2, Bell, Clock, FileText, CalendarClock, FileText as ReportsIcon, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import backendUrl from "@/app/config";
@@ -13,21 +13,21 @@ interface Menu {
 export const Sidebar = ({ isMenu, setIsMenu }: Menu) => {
   const [isPermisible, setIsPermisible] = useState(false);
 
-   // Fetch user info
-    useEffect(() => {
-      const fetchUserInfo = async () => {
-        try {
-          const res = await axios.get(`${backendUrl}/api/v1/admin/users/my/info`, { withCredentials: true });
-          const user = res.data.user;
-          if (user.role === "Team Leader" || user.role === "Operation Officer" || user.superRole === "Admin") {
-            setIsPermisible(true)
-          }
-        } catch (err) {
-          setIsPermisible(false)
+  // Fetch user info
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const res = await axios.get(`${backendUrl}/api/v1/admin/users/my/info`, { withCredentials: true });
+        const user = res.data.user;
+        if (user.role === "Team Leader" || user.role === "Operation Officer" || user.superRole === "Admin") {
+          setIsPermisible(true);
         }
-      };
-      fetchUserInfo();
-    }, []);
+      } catch (err) {
+        setIsPermisible(false);
+      }
+    };
+    fetchUserInfo();
+  }, []);
 
   return (
     <div
@@ -52,10 +52,21 @@ export const Sidebar = ({ isMenu, setIsMenu }: Menu) => {
         {/* Links */}
         <SidebarLink href="/dashboard" icon={<Pointer size={15} className="rotate-90" />} label="My Dashboard" />
         <SidebarLink href="/attendance" icon={<CalendarCheck size={15} />} label="My Attendance" />
-        <div className={`${isPermisible ? 'block' : 'hidden'}`}><SidebarLink href="/milkrecord/manage" icon={<ClipboardList size={15} />} label="Manage Milk Records" /> </div>
-        <SidebarLink href="/milkrecord/view" icon={<FileText size={15} />} label="View Milk Records" />
+        
+        {/* Conditional Links for Team Leaders/Admins */}
+        <div className={`${isPermisible ? 'block' : 'hidden'}`}>
+          <SidebarLink href="/milkrecord/manage" icon={<ClipboardList size={15} />} label="Manage Milk Records" />
+        </div>
+
+        <SidebarLink href="/milkrecord/view" icon={<BarChart2 size={15} />} label="View Milk Records" />
+
+        {/* NEW: Work Reports */}
+        <div className={`${isPermisible ? 'block' : 'hidden'}`}>
+        <SidebarLink href="/report/create" icon={<PlusCircle size={15} />} label="Create Daily Report" />
+        </div>
+        <SidebarLink href="/report/display" icon={<ReportsIcon size={15} />} label="View Daily Reports" />
+
         <SidebarLink href="#" icon={<Clock size={15} />} label="My Overtime" />
-        <SidebarLink href="#" icon={<BarChart2 size={15} />} label="Reports & Analytics" />
         <SidebarLink href="/daysoff" icon={<CalendarClock size={15} className="rotate-90" />} label="My Off Schedule" />
         <SidebarLink href="#" icon={<Bell size={15} />} label="Notifications" />
       </div>

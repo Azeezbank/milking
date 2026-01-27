@@ -1,6 +1,8 @@
+
 "use client";
-import { Pointer, X, Users, Calendar, FileText, Bell, Activity, User2, CalendarClock, Barcode } from "lucide-react";
+import { Pointer, X, Users, Calendar, FileText, Bell, Activity, User2, CalendarClock, Barcode, FileText as ReportsIcon } from "lucide-react";
 import Link from "next/link";
+import { Layout } from "@/app/components/adminLayout/adminLayout"
 
 interface SidebarProps {
   isMenu: boolean;
@@ -51,7 +53,7 @@ export const AdminSidebar = ({ isMenu, setIsMenu }: SidebarProps) => {
         <Link href="/admin/animals/create">
           <div className="flex items-center gap-2 py-3 px-2 rounded hover:bg-sky-100 cursor-pointer">
             <User2 size={15} className="text-sky-500" />
-            <span className="font-semibold text-sm">Register Milking animal</span>
+            <span className="font-semibold text-sm">Register Milking Animal</span>
           </div>
         </Link>
         
@@ -62,10 +64,11 @@ export const AdminSidebar = ({ isMenu, setIsMenu }: SidebarProps) => {
           </div>
         </Link>
 
-        <Link href="/admin/reports">
+        {/* NEW: Manage Reports */}
+        <Link href="/admin/report">
           <div className="flex items-center gap-2 py-3 px-2 rounded hover:bg-sky-100 cursor-pointer">
-            <FileText size={15} className="text-sky-500" />
-            <span className="font-semibold text-sm">Reports & Analytics</span>
+            <ReportsIcon size={15} className="text-sky-500" />
+            <span className="font-semibold text-sm">Manage Daily Reports</span>
           </div>
         </Link>
 
@@ -86,4 +89,3 @@ export const AdminSidebar = ({ isMenu, setIsMenu }: SidebarProps) => {
     </div>
   );
 };
-

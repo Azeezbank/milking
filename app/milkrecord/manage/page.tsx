@@ -5,6 +5,7 @@ import axios from "axios";
 import Layout from "@/app/components/layout/page";
 import { Droplet, Clock, Save } from "lucide-react";
 import backendUrl from "@/app/config";
+import { useRouter } from "next/navigation";
 
 interface Animal {
   id: string;
@@ -76,6 +77,23 @@ const MilkRecordPage = () => {
       setLoading(false);
     }
   };
+
+  const router = useRouter();
+   // Fetch user info
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const res = await axios.get(`${backendUrl}/api/v1/admin/users/my/info`, { withCredentials: true });
+        const user = res.data.user;
+        if (user.role !== "Team Leader" && user.role !== "Deputy Team Leader" && user.role !== "Operation Manager" && user.superRole !== "Admin") {
+       router.push("/");
+        }
+      } catch {
+        router.push("/");
+      }
+    };
+    fetchUserInfo();
+  }, []);
 
   return (
     <Layout>
