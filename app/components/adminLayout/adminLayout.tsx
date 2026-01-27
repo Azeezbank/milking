@@ -6,8 +6,7 @@ import { useEffect, useState } from "react";
 import { ReactNode } from "react";
 import Footer from "../footer/footer";
 import { useRouter } from "next/navigation";
-import axios from "axios";
-import backendUrl from "@/app/config";
+import api from "@/app/components/services/api";
 
 
 export const Layout = ({ children }: { children: ReactNode }) => {
@@ -17,26 +16,26 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                await axios.get(`${backendUrl}/api/v1/protected`, { withCredentials: true });
+                await api.get("/api/v1/protected");
             } catch (err: any) {
-                router.push('/');
+                router.push("/"); // redirect if not authenticated
             }
         };
 
         checkAuth();
     }, []);
 
-
+    // Check admin protected route
     useEffect(() => {
-        const checkAuth = async () => {
+        const checkAdminAuth = async () => {
             try {
-                await axios.get(`${backendUrl}/api/v1/admin/protected`, { withCredentials: true });
+                await api.get("/api/v1/admin/protected");
             } catch (err: any) {
-                router.push('/');
+                router.push("/"); // redirect if not authenticated
             }
         };
 
-        checkAuth();
+        checkAdminAuth();
     }, []);
 
     const [isMenu, setIsMenu] = useState(false);

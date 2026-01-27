@@ -3,9 +3,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import axios from "axios";
 import { Layout } from "@/app/components/layout/page"
-import backendUrl from "@/app/config";
+import api from "@/app/components/services/api";
 
 interface Report {
   id: string;
@@ -26,18 +25,16 @@ export default function ReportDetailPage() {
   const [loading, setLoading] = useState(false);
 
   const fetchReport = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get(`${backendUrl}/api/v1/report/${id}`, {
-        withCredentials: true,
-      });
-      setReport(res.data.report);
-      setLoading(false);
-    } catch (err) {
-      console.error(err);
-      setLoading(false);
-    }
-  };
+  try {
+    setLoading(true);
+    const res = await api.get(`/api/v1/report/${id}`);
+    setReport(res.data.report);
+  } catch (err: any) {
+    console.error("Failed to fetch report:", err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     if (id) fetchReport();

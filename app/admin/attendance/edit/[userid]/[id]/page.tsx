@@ -1,13 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-// import Layout from "../components/layout/page";
-import axios from "axios";
-import { UserCheck, UserX } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useParams } from "next/navigation";
 import Layout from "@/app/components/adminLayout/adminLayout";
-import backendUrl from "@/app/config";
+import api from "@/app/components/services/api"
 
 const AdminEditAttendance = () => {
   const router = useRouter();
@@ -20,43 +17,43 @@ const AdminEditAttendance = () => {
   const [time, setTime] = useState("");
   const [loading, setLoading] = useState(false);
 
-   const id = params.userid;
-   const pid = params.id;
-  
+  const id = params.userid;
+  const pid = params.id;
+
 
   // Fetch record (placeholder)
   useEffect(() => {
-
     const fetchRecord = async () => {
       try {
-       
-        const response = await axios.get(`${backendUrl}/api/v1/admin/attendance/${id}`, { withCredentials: true });
+        const response = await api.get(`/api/v1/admin/attendance/${id}`);
         const record = response.data.record;
 
         setUserName(record.User.name);
-        setDate(record.date);
-        setTime(record.date);
-        setStatus(record.status);
+
         const dt = new Date(record.date);
         setDate(dt.toLocaleDateString());
         setTime(dt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
-      } catch (err) {
-        console.error(err);
+        setStatus(record.status);
+      } catch (err: any) {
+        console.error("Failed to fetch attendance record:", err);
+        // Optional: show error message
       }
     };
 
     fetchRecord();
   }, []);
 
+
+
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      await axios.put(`${backendUrl}/api/v1/admin/attendance/${pid}`, { status }, { withCredentials: true });
+      await api.put(`/api/v1/admin/attendance/${pid}`, { status });
       alert("Attendance status updated successfully!");
       router.push("/admin/attendance");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to update attendance");
+    } catch (err: any) {
+      console.error("Failed to update attendance:", err);
+      alert(err.response?.data?.message || "Failed to update attendance");
     } finally {
       setLoading(false);
     }

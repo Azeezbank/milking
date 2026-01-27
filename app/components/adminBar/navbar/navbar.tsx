@@ -2,8 +2,8 @@
 import { Grip } from "lucide-react";
 import { useState } from "react";
 import { useEffect } from "react";
-import axios from "axios";
-import backendUrl from "@/app/config";
+import api from "@/app/components/services/api";
+
 
 interface AdminNavProps {
   isMenu: boolean;
@@ -12,25 +12,30 @@ interface AdminNavProps {
 
 export const AdminNavBar = ({ isMenu, setIsMenu }: AdminNavProps) => {
   const [name, setName] = useState("");
-    const [role, setRole] = useState("");
-    
-       useEffect(() => {
-              const checkAuth = async () => {
-                  try {
-                      const res = await axios.get(`${backendUrl}/api/v1/admin/users/my/info`, { withCredentials: true });
-                      if (res.data.user.role === "Team Leader" || res.data.user.superRole === "Admin") {
-                          setName(res.data.user.name);
-                          setRole(res.data.user.role);
-                      } else {
-                      }
-                  } catch (err: any) {
-                  }
-              };
-      
-              checkAuth();
-          }, []);
-    
-          const shortName = name.split(" ").slice(0, 2).join(" ");
+  const [role, setRole] = useState("");
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await api.get("/api/v1/admin/users/my/info");
+        const user = res.data.user;
+
+        if (user.role === "Team Leader" || user.superRole === "Admin") {
+          setName(user.name);
+          setRole(user.role);
+        } else {
+          // Optional: handle unauthorized role if needed
+        }
+      } catch (err: any) {
+        console.error("Failed to fetch user info:", err);
+        // Optional: redirect or show message
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  const shortName = name.split(" ").slice(0, 2).join(" ");
   return (
     <header className="bg-gray-50 shadow-sm">
       <nav className="flex justify-between items-center px-5 py-3">

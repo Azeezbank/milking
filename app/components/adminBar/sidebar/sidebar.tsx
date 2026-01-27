@@ -2,7 +2,6 @@
 "use client";
 import { Pointer, X, Users, Calendar, FileText, Bell, Activity, User2, CalendarClock, Barcode, FileText as ReportsIcon } from "lucide-react";
 import Link from "next/link";
-import { Layout } from "@/app/components/adminLayout/adminLayout"
 
 interface SidebarProps {
   isMenu: boolean;

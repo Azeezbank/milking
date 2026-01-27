@@ -1,11 +1,10 @@
 "use client";
 import { Check, ArrowBigRight } from "lucide-react";
 import { useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { LoadingModal } from "./components/modal/page";
 import Footer from "./components/footer/footer";
-import backendUrl from "../app/config";
+import api from "@/app/components/services/api";
 
 
 export default function Home() {
@@ -23,74 +22,65 @@ export default function Home() {
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
       setLoading(true);
-      const response = await axios.post(`${backendUrl}/api/v1/auth/register`, { name, email, phone, username, password, confirmPassword }, { withCredentials: true });
+
+      const response = await api.post("/api/v1/auth/register", {
+        name,
+        email,
+        phone,
+        username,
+        password,
+        confirmPassword,
+      });
+
       if (response.status === 201) {
-        setLoading(false);
-        setIsAuthForm(true);
+        setIsAuthForm(true); // show login form or next step
       }
     } catch (err: any) {
-      console.error(err);
+      console.error("Registration failed:", err);
+      alert(err.response?.data?.message || "Registration Failed");
+    } finally {
       setLoading(false);
-      alert(err.response.data.message || 'Registration Failed');
     }
   };
 
-  // const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   try {
-  //     setLoading(true);
-  //     const response = await axios.post(`${backendUrl}/api/v1/auth/login`, { identifier, password }, { withCredentials: true });
-  //     // if (response.status === 200) {
-  //     router.push('/dashboard');
-  //     setLoading(false);
-  //     // }
-  //   } catch (err: any) {
-  //     console.error(err);
-  //     // safer alert
-  //     if (err.response && err.response.data && err.response.data.message) {
-  //       alert(err.response.data.message);
-  //     } else {
-  //       alert("Login Failed");
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  try {
-    setLoading(true);
+    e.preventDefault();
 
-    // Make login request
-    const response = await axios.post(`${backendUrl}/api/v1/auth/login`, {
-      identifier,
-      password,
-    });
+    try {
+      setLoading(true);
 
-    // Extract token from backend response
-    const token = response.data.token; // make sure your backend sends { token: "...", user: {...} }
-    const user = response.data.user;   // optional
+      // Make login request
+      const response = await api.post("/api/v1/auth/login", {
+        identifier,
+        password,
+      });
 
-    // Store token in localStorage
-    localStorage.setItem("token", token);
-    if (user) localStorage.setItem("user", JSON.stringify(user));
+      // Extract token from backend response
+      const token = response.data.token; // { token: "...", user: {...} }
+      const user = response.data.user;   // optional
 
-    // Redirect to dashboard
-    router.push("/dashboard");
-  } catch (err: any) {
-    console.error(err);
+      // Store token in localStorage
+      localStorage.setItem("token", token);
+      if (user) localStorage.setItem("user", JSON.stringify(user));
 
-    if (err.response && err.response.data && err.response.data.message) {
-      alert(err.response.data.message);
-    } else {
-      alert("Login Failed");
+      // Redirect to dashboard
+      router.push("/dashboard");
+    } catch (err: any) {
+      console.error("Login failed:", err);
+
+      if (err.response?.data?.message) {
+        alert(err.response.data.message);
+      } else {
+        alert("Login Failed");
+      }
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
 
   return (

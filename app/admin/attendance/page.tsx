@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-// import Layout from "../components/layout/page";
 import axios from "axios";
 import { CalendarDays, Clock2, ArrowUpNarrowWide, TrendingUp, Edit } from "lucide-react";
 import Link from "next/link";
 import Layout from "../../components/adminLayout/adminLayout";
-import backendUrl from "@/app/config";
+import api from "@/app/components/services/api";
 
 const AdminAttendance = () => {
   const [attendanceRecords, setAttendanceRecords] = useState<any[]>([]);
@@ -19,21 +18,23 @@ const AdminAttendance = () => {
 
   // Fetch attendance
   const fetchAttendance = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(
-        `${backendUrl}/api/v1/admin/attendance?page=${page}&limit=${limit}&filter=${filter}${customDate ? `&date=${customDate}` : ""}`,
-        { withCredentials: true }
-      );
+  setLoading(true);
+  try {
+    const response = await api.get(
+      `/api/v1/admin/attendance?page=${page}&limit=${limit}&filter=${filter}${
+        customDate ? `&date=${customDate}` : ""
+      }`
+    );
 
-      setAttendanceRecords(response.data.attendances);
-      setTotalPages(response.data.totalPages);
-    } catch (err: any) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setAttendanceRecords(response.data.attendances);
+    setTotalPages(response.data.totalPages);
+  } catch (err: any) {
+    console.error("Failed to fetch attendance:", err);
+    // Optional: show toast or alert
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchAttendance();

@@ -2,10 +2,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import { LoadingModal } from "../components/modal/page";
-import axios from "axios";
 import Layout from "../components/layout/page";
 import { ArrowUpNarrowWide, CalendarDays, Clock2, TrendingUp } from "lucide-react";
-import backendUrl from "@/app/config";
+import api from "@/app/components/services/api";
 
 export const Attendance = () => {
     const [status, setStatus] = useState("Present");
@@ -21,33 +20,27 @@ export const Attendance = () => {
     const handleSubmit = async () => {
         try {
             setLoading(true);
-            await axios.put(
-                `${backendUrl}/api/v1/attendance`,
-                { status },
-                { withCredentials: true }
-            );
+            await api.put("/api/v1/attendance", { status });
             alert("Attendance marked successfully");
-            setLoading(false);
-            fetchAttendanceRecords();
+            fetchAttendanceRecords(); // refresh records
         } catch (err: any) {
-            console.error(err);
+            console.error("Failed to mark attendance:", err);
             alert(err.response?.data?.message || "Failed to mark attendance");
+        } finally {
             setLoading(false);
         }
     };
 
+    // Fetch attendance records
     const fetchAttendanceRecords = async () => {
         try {
             setLoading(true);
-            const response = await axios.get(
-                `${backendUrl}/api/v1/attendance?page=${page}&limit=${limit}`,
-                { withCredentials: true }
-            );
+            const response = await api.get(`/api/v1/attendance?page=${page}&limit=${limit}`);
             setAttendanceRecords(response.data.attendances);
             setTotalPages(response.data.totalPages);
-            setLoading(false);
-        } catch (err) {
-            console.error(err);
+        } catch (err: any) {
+            console.error("Failed to fetch attendance records:", err);
+        } finally {
             setLoading(false);
         }
     };
@@ -172,8 +165,8 @@ export const Attendance = () => {
                                             <td className="px-3 py-2 text-sm">
                                                 <span
                                                     className={`px-2 py-1 rounded-full text-xs font-medium ${record.status === "Present"
-                                                            ? "bg-green-100 text-green-700"
-                                                            : "bg-red-100 text-red-700"
+                                                        ? "bg-green-100 text-green-700"
+                                                        : "bg-red-100 text-red-700"
                                                         }`}
                                                 >
                                                     {record.status}

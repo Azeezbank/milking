@@ -9,9 +9,8 @@ import {
   TrendingUp,
 } from "lucide-react";
 import Layout from "../../components/adminLayout/adminLayout";
-import backendUrl from "@/app/config";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import api from "@/app/components/services/api";
 
 
 
@@ -24,63 +23,60 @@ export default function AdminDashboard() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await axios.get(`${backendUrl}/api/v1/admin/users/my/info`, { withCredentials: true });
+        const res = await api.get("/api/v1/admin/users/my/info");
         setTotalUsers(res.data.totalUser);
       } catch (err: any) {
-        console.error(err);
+        console.error("Failed to fetch user info:", err);
       }
     };
     checkAuth();
   }, []);
 
-   useEffect(() => {
+  // Fetch present attendance
+  useEffect(() => {
     const checkPresent = async () => {
       try {
-        const res = await axios.get(`${backendUrl}/api/v1/admin/attendance/present`, { withCredentials: true });
+        const res = await api.get("/api/v1/admin/attendance/present");
         setPresent(res.data);
       } catch (err: any) {
-        console.error(err);
+        console.error("Failed to fetch present attendance:", err);
       }
     };
     checkPresent();
   }, []);
 
+  // Fetch milk summary
   useEffect(() => {
     const fetchMilkSummary = async () => {
       try {
         const today = new Date().toISOString();
-        const res = await axios.get(`${backendUrl}/api/v1/milk/record/summary`, {
-          params: {
-            date: today,
-          },
-          withCredentials: true,
+        const res = await api.get("/api/v1/milk/record/summary", {
+          params: { date: today },
         });
 
         const data = res.data;
-
         setTotalMilk(data.totalMilk);
-
-      } catch (err) {
-        console.error(err);
+      } catch (err: any) {
+        console.error("Failed to fetch milk summary:", err);
       }
     };
-
     fetchMilkSummary();
   }, []);
 
+  // Fetch off limit
   useEffect(() => {
-    try {
-      const handleOffLimit = async () => {
-        const res = await axios.get(`${backendUrl}/api/v1/off/limit`, { withCredentials: true });
+    const handleOffLimit = async () => {
+      try {
+        const res = await api.get("/api/v1/off/limit");
         if (res.status === 200) {
-          setMaxDays(res.data.maxDays)
+          setMaxDays(res.data.maxDays);
         }
-      };
-      handleOffLimit();
-    } catch (err) {
-      console.error(err);
-    }
-  }, [])
+      } catch (err: any) {
+        console.error("Failed to fetch off limit:", err);
+      }
+    };
+    handleOffLimit();
+  }, []);
 
   return (
     <Layout>
@@ -158,10 +154,10 @@ export default function AdminDashboard() {
                     <td className="py-3 font-medium">{item.name}</td>
                     <td
                       className={`font-semibold ${item.status === "Present"
-                          ? "text-green-600"
-                          : item.status === "Late"
-                            ? "text-amber-600"
-                            : "text-rose-600"
+                        ? "text-green-600"
+                        : item.status === "Late"
+                          ? "text-amber-600"
+                          : "text-rose-600"
                         }`}
                     >
                       {item.status}

@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
-import backendUrl from "../config";
 import Layout from "../components/layout/page";
+import api from "@/app/components/services/api";
 
 interface WorkOff {
   id: string;
@@ -24,37 +23,33 @@ export default function WorkOffPage() {
 
   const [loading, setLoading] = useState(false);
 
-
   useEffect(() => {
-    try {
-      const handleOffLimit = async () => {
-        const res = await axios.get(`${backendUrl}/api/v1/off/limit`, { withCredentials: true });
+    const handleOffLimit = async () => {
+      try {
+        const res = await api.get("/api/v1/off/limit");
         if (res.status === 200) {
-          setOffLimit(res.data.maxDays)
+          setOffLimit(res.data.maxDays);
         }
-      };
-      handleOffLimit();
-    } catch (err) {
-      console.error(err);
-    }
-  }, [])
+      } catch (err: any) {
+        console.error("Failed to fetch off limit:", err);
+      }
+    };
 
-  /** FETCH USER WORK-OFF SUMMARY */
+    handleOffLimit();
+  }, []);
+
+  // Fetch user work-off summary
   const fetchSummary = async () => {
     try {
-      const res = await axios.get(
-        `${backendUrl}/api/v1/off`,
-        { withCredentials: true }
-      );
-
+      const res = await api.get("/api/v1/off");
       setRecords(res.data.records);
       setSummary({
         totalSelected: res.data.totalSelected,
         used: res.data.used,
         remaining: res.data.remaining,
       });
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error("Failed to fetch work-off summary:", err);
     }
   };
 
@@ -93,18 +88,14 @@ export default function WorkOffPage() {
         return;
       }
 
-      await axios.post(
-        `${backendUrl}/api/v1/off`,
-        { dates: selectedDates },
-        { withCredentials: true }
-      );
+      await api.post("/api/v1/off", { dates: selectedDates });
 
       alert('Your days off selection has been saved successfully')
 
       setSelectedDates([]);
       fetchSummary();
     } catch (err: any) {
-      alert(err.response?.data?.message || "Failed to save days");
+      alert(err.response?.data?.message || "Failed to submit work-off");
     } finally {
       setLoading(false);
     }

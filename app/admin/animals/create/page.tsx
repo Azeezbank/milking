@@ -1,43 +1,39 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import Layout from "@/app/components/adminLayout/adminLayout";
-import backendUrl from "@/app/config";
+import api from "@/app/components/services/api"
 
 const RegisterAnimalPage = () => {
   const router = useRouter();
   const [animalTag, setAnimalTag] = useState("");
   const [loading, setLoading] = useState(false);
 
+
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!animalTag.trim()) {
-      alert("Animal tag is required");
-      return;
-    }
+  if (!animalTag.trim()) {
+    alert("Animal tag is required");
+    return;
+  }
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      await axios.post(
-        `${backendUrl}/api/v1/admin/create/animals`,
-        { animalTag },
-        { withCredentials: true }
-      );
+    await api.post("/api/v1/admin/create/animals", { animalTag });
 
-      setLoading(false);
-      alert("Animal registered successfully ✅");
-      setAnimalTag("");
-      // router.push("/admin/animals");
-    } catch (err: any) {
-      console.error(err);
-      setLoading(false);
-      alert(err.response?.data?.message || "Failed to register animal");
-    }
-  };
+    setLoading(false);
+    alert("Animal registered successfully ✅");
+    setAnimalTag("");
+    // router.push("/admin/animals"); // optional redirect
+  } catch (err: any) {
+    console.error("Failed to register animal:", err);
+    setLoading(false);
+    alert(err.response?.data?.message || "Failed to register animal");
+  }
+};
 
   return (
     <Layout>

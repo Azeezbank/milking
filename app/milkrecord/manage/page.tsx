@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Layout from "@/app/components/layout/page";
 import { Droplet, Clock, Save } from "lucide-react";
-import backendUrl from "@/app/config";
 import { useRouter } from "next/navigation";
+import api from "@/app/components/services/api";
 
 interface Animal {
   id: string;
@@ -23,16 +22,14 @@ const MilkRecordPage = () => {
   const [date, setDate] = useState("");
 
   // Fetch animals
+
   useEffect(() => {
     const fetchAnimals = async () => {
       try {
-        const res = await axios.get(
-          `${backendUrl}/api/v1/milk/record/animals`,
-          { withCredentials: true }
-        );
+        const res = await api.get("/api/v1/milk/record/animals");
         setAnimals(res.data.animals);
-      } catch (err) {
-        console.error(err);
+      } catch (err: any) {
+        console.error("Failed to fetch animals:", err);
       }
     };
 
@@ -56,17 +53,13 @@ const MilkRecordPage = () => {
 
     try {
       setLoading(true);
-      await axios.post(
-        `${backendUrl}/api/v1/admin/create/animals/record`,
-        {
-          animalId,
-          animalTag,
-          period,
-          quantity: Number(quantity),
-          date
-        },
-        { withCredentials: true }
-      );
+      await api.post("/api/v1/admin/create/animals/record", {
+        animalId,
+        animalTag,
+        period,
+        quantity: Number(quantity),
+        date,
+      });
 
       setMessage("Milk record saved successfully");
       setQuantity("");
@@ -79,14 +72,14 @@ const MilkRecordPage = () => {
   };
 
   const router = useRouter();
-   // Fetch user info
+  // Fetch user info
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const res = await axios.get(`${backendUrl}/api/v1/admin/users/my/info`, { withCredentials: true });
+        const res = await api.get("/api/v1/admin/users/my/info");
         const user = res.data.user;
         if (user.role !== "Team Leader" && user.role !== "Deputy Team Leader" && user.role !== "Operation Manager" && user.superRole !== "Admin") {
-       router.push("/");
+          router.push("/");
         }
       } catch {
         router.push("/");
@@ -169,7 +162,7 @@ const MilkRecordPage = () => {
               />
             </div>
 
-             {/* Date */}
+            {/* Date */}
             <div>
               <label className="text-sm text-gray-600">Date</label>
               <input

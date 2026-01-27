@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Link from "next/link";
 import Layout from "@/app/components/adminLayout/adminLayout";
-import backendUrl from "@/app/config";
+import api from "@/app/components/services/api";
+
 
 interface User {
   id: string;
@@ -24,11 +24,12 @@ const UsersPage = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${backendUrl}/api/v1/admin/users`, { withCredentials: true });
+      const res = await api.get("/api/v1/admin/users");
       setUsers(res.data.users);
-      setLoading(false);
     } catch (err: any) {
-      console.error(err);
+      console.error("Failed to fetch users:", err);
+      setUsers([]); // optional fallback
+    } finally {
       setLoading(false);
     }
   };
