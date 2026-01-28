@@ -47,8 +47,8 @@ const Dashboard = () => {
   const [totalMilk, setTotalMilk] = useState(0);
   const [prevTotalMilk, setPrevTotalMilk] = useState(0);
   const [animalsMilked, setAnimalsMilked] = useState(0);
-  const [avgPerAnimal, setAvgPerAnimal] = useState(0);
-  const [avgMilkingDays, setAvgMilkingDays] = useState(0);
+  const [avgPerAnimal, setAvgPerAnimal] = useState<Number>(0);
+  const [avgMilkingDays, setAvgMilkingDays] = useState<Number>(0);
   const [filteredAnimalStats, setFilteredAnimalStats] = useState<{ daysMilked: number; totalMilk: number } | null>(null);
   const [filterRange, setFilterRange] = useState("day");
   const [animalFilter, setAnimalFilter] = useState("");
@@ -235,12 +235,12 @@ useEffect(() => {
 
           <div className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition">
             <div className="flex items-center gap-3 text-sky-600"><TrendingUp /><p className="text-sm text-gray-500">Average / Animal</p></div>
-            <h3 className="text-3xl font-bold mt-3">{avgPerAnimal.toFixed(1)} L</h3>
+            <h3 className="text-3xl font-bold mt-3">{(avgPerAnimal ?? 0).toFixed(1)} L</h3>
           </div>
 
           <div className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition">
             <div className="flex items-center gap-3 text-sky-600"><Users /><p className="text-sm text-gray-500">Avg Milking Days</p></div>
-            <h3 className="text-3xl font-bold mt-3">{avgMilkingDays.toFixed(1)}</h3>
+            <h3 className="text-3xl font-bold mt-3">{(avgMilkingDays ?? 0).toFixed(1)}</h3>
           </div>
 
           {filteredAnimalStats && (
