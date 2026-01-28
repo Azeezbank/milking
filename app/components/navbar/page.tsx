@@ -13,11 +13,12 @@ export const NavBar = ({ isMenu, setIsMenu }: Menu) => {
         <div className="flex justify-between items-center py-2">
           {/* Logo & Branding */}
           <div className="flex gap-3 items-center">
+            <div className="w-15 h-10 p-1 flex justify-center items-center">
             <img
-              src="https://www.sparkgist.com/wp-content/uploads/2022/05/CWAY-Group.jpeg"
+              src="https://cdn.thenationonlineng.net/wp-content/uploads/2023/07/25040548/CWAY.png"
               alt="logo"
-              className="w-12 h-12 rounded-full border border-red-900"
             />
+            </div>
             <div className="flex flex-col leading-tight">
               <h2 className="text-sky-500 font-semibold text-base">CWAY FOOD AND BEVERAGES</h2>
               <div className="flex items-center gap-1 text-sm text-red-500">

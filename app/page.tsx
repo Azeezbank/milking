@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { LoadingModal } from "./components/modal/page";
 import Footer from "./components/footer/footer";
 import api from "@/app/components/services/api";
+import { members } from "./members"
 
 
 export default function Home() {
@@ -87,8 +88,8 @@ export default function Home() {
     <div>
       <header className="bg-sky-500 fixed w-full z-5 py-2">
         <nav className="flex gap-2 items-center px-10">
-          <div className="bg-gray-50 m-2 rounded-full">
-            <img src={'https://www.sparkgist.com/wp-content/uploads/2022/05/CWAY-Group.jpeg'} alt="Logo" className="w-13 rounded-lg" />
+          <div className="bg-gray-50 m-2 p-1 rounded-lg">
+            <img src={'https://cdn.thenationonlineng.net/wp-content/uploads/2023/07/25040548/CWAY.png'} alt="Logo" className="w-13 rounded-lg" />
           </div>
           <h1 className="font-mono font-bold text-white text-4xl">MilkingTeam</h1>
         </nav>
@@ -318,7 +319,7 @@ export default function Home() {
               <div className="grid sm:grid-cols-3 gap-6">
                 {[
                   { name: "Hassan", role: "Deputy Team Leader I" },
-                  { name: "Wumi", role: "Deputy Team Leader" },
+                  { name: "Ibiwumi", role: "Deputy Team Leader" },
                   { name: "Susan", role: "Deputy Team Leader" },
                 ].map((member, index) => (
                   <div
@@ -361,8 +362,33 @@ export default function Home() {
                   />
                   <h4 className="font-semibold text-gray-800">{name}</h4>
                   <p className="text-sky-600 text-sm">Operations Officer</p>
-                  <p className="text-gray-500 text-xs mt-3">
-                    Responsible for daily milking tasks, cow handling, and cleanliness.
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* members */}
+          <div className="mt-20">
+            <h3 className="text-2xl font-bold text-sky-600 text-center mb-10">
+              👷🏽‍♂️ Members
+            </h3>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 ">
+              {members.map((mem, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-2xl shadow-sm hover:shadow-md transition p-5 text-center group"
+                >
+                  <img
+                    src={mem.image}
+                    alt={mem.name}
+                    className="w-16 h-16 rounded-full mx-auto mb-3 object-cover ring-2 ring-sky-100 group-hover:ring-sky-400"
+                  />
+                  <p className="font-medium text-gray-800 text-sm">
+                    {mem.name}
+                  </p>
+                  <p className="text-sky-600 text-sm">
+                    {mem.role}
                   </p>
                 </div>
               ))}

@@ -119,8 +119,8 @@ useEffect(() => {
           )
         );
 
-        setAnimalsMilked(new Set(data.records.map((r: MilkSession) => r.animalTag)).size);
-        setAvgPerAnimal(data.records.length ? data.totalMilk / new Set(data.records.map((r: MilkSession) => r.animalTag)).size : 0);
+        setAnimalsMilked(data.animalsMilked);
+        setAvgPerAnimal(data.avgPerAnimal);
 
         // Daily trend chart
 

@@ -41,11 +41,12 @@ export const AdminNavBar = ({ isMenu, setIsMenu }: AdminNavProps) => {
       <nav className="flex justify-between items-center px-5 py-3">
         {/* Logo & Portal Title */}
         <div className="flex gap-3 items-center">
+          <div className="w-15 h-10 p-1 flex justify-center items-center">
           <img
-            src="https://www.sparkgist.com/wp-content/uploads/2022/05/CWAY-Group.jpeg"
+            src="https://cdn.thenationonlineng.net/wp-content/uploads/2023/07/25040548/CWAY.png"
             alt="logo"
-            className="border border-red-500 rounded-full w-12 h-12"
           />
+          </div>
           <div className="flex flex-col">
             <h2 className="text-sky-500 font-bold">CWAY Admin Portal</h2>
             <p className="text-sm text-gray-500 flex items-center gap-1">

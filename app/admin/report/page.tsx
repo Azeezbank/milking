@@ -3,230 +3,216 @@
 
 import { useEffect, useState } from "react";
 import RichTextEditor from "@/app/components/editor/RichTextEditor";
-import { Layout } from "@/app/components/adminLayout/adminLayout"
+import { Layout } from "@/app/components/adminLayout/adminLayout";
 import api from "@/app/components/services/api";
 
 interface Report {
-    id: string;
-    title: string;
-    tasks: string;
-    challenges?: string;
-    nextPlan?: string;
-    date: string;       // include date
-    createdAt: string;
-    user: {
-        name: string;
-    };
+  id: string;
+  title: string;
+  tasks: string;
+  challenges?: string;
+  nextPlan?: string;
+  date: string;
+  createdAt: string;
+  user?: {
+    name: string;
+  };
 }
+
+type FilterType =
+  | "daily-reports"
+  | "daily-summary"
+  | "weekly-summary"
+  | "monthly-summary";
 
 export default function AdminReportsPage() {
-    const [reports, setReports] = useState<Report[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [editingId, setEditingId] = useState<string | null>(null);
-    const [savingId, setSavingId] = useState<string | null>(null);
-    const [editForm, setEditForm] = useState({
-        title: "",
-        tasks: "",
-        challenges: "",
-        nextPlan: "",
-        date: "",
+  const [records, setRecords] = useState<Report[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [savingId, setSavingId] = useState<string | null>(null);
+
+  const [filter, setFilter] = useState<FilterType>("daily-reports");
+
+  const [editForm, setEditForm] = useState({
+    title: "",
+    tasks: "",
+    challenges: "",
+    nextPlan: "",
+    date: "",
+  });
+
+  /* ---------------- FETCH DATA ---------------- */
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      let res;
+
+      // 🔹 DAILY REPORTS
+      if (filter === "daily-reports") {
+        res = await api.get("/api/v1/report", { params: { range: "daily" } });
+        setRecords(res.data.reports.day || []);
+        return;
+      }
+
+      // 🔹 AI SUMMARIES
+      const type =
+        filter === "daily-summary"
+          ? "daily"
+          : filter === "weekly-summary"
+          ? "weekly"
+          : "monthly";
+
+      res = await api.get("/api/v1/report/summary", {
+        params: { type },
+      });
+
+      setRecords(
+        res.data.map((s: any) => ({
+          id: s.id,
+          title: `${type.charAt(0).toUpperCase() + type.slice(1)} Summary`,
+          tasks: s.content,
+          date: s.startDate,
+          createdAt: s.createdAt,
+          user: { name: "AI Summary" },
+        }))
+      );
+    } catch (err) {
+      console.error("Fetch failed", err);
+      setRecords([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [filter]);
+
+  /* ---------------- EDIT REPORT ---------------- */
+  const startEditing = (r: Report) => {
+    setEditingId(r.id);
+    setEditForm({
+      title: r.title,
+      tasks: r.tasks,
+      challenges: r.challenges || "",
+      nextPlan: r.nextPlan || "",
+      date: r.date.split("T")[0],
     });
+  };
 
-    const fetchReports = async () => {
-        try {
-            setLoading(true);
-            const res = await api.get("/api/v1/report", {
-                params: { range: "daily" },
-            });
-            setReports(res.data.reports.day || []);
-        } catch (err: any) {
-            console.error("Failed to fetch reports:", err);
-            setReports([]);
-        } finally {
-            setLoading(false);
-        }
-    };
+  const saveEdit = async (id: string) => {
+    try {
+      setSavingId(id);
+      const res = await api.put(`/api/v1/report/${id}`, editForm);
+      setRecords(records.map((r) => (r.id === id ? res.data.report : r)));
+      setEditingId(null);
+      alert("Updated");
+    } finally {
+      setSavingId(null);
+    }
+  };
 
-    const startEditing = (report: Report) => {
-        setEditingId(report.id);
-        setEditForm({
-            title: report.title,
-            tasks: report.tasks,
-            challenges: report.challenges || "",
-            nextPlan: report.nextPlan || "",
-            date: report.date.split("T")[0], // format as yyyy-mm-dd for input
-        });
-    };
+  const deleteReport = async (id: string) => {
+    if (!confirm("Delete report?")) return;
+    await api.delete(`/api/v1/report/${id}`);
+    setRecords(records.filter((r) => r.id !== id));
+  };
 
-    const cancelEditing = () => {
-        setEditingId(null);
-        setEditForm({
-            title: "",
-            tasks: "",
-            challenges: "",
-            nextPlan: "",
-            date: "",
-        });
-    };
+  /* ---------------- GENERATE SUMMARY ---------------- */
+  const generateSummary = async (type: "daily" | "weekly" | "monthly") => {
+    if (!confirm(`Generate ${type} summary?`)) return;
+    await api.post(`/api/v1/admin/summary/${type}`);
+    alert("Summary generated");
+  };
 
+  /* ---------------- RENDER ---------------- */
+  if (loading) return <p className="p-6">Loading...</p>;
 
-    const saveEdit = async (id: string) => {
-        try {
-            setSavingId(id); // start saving
-            const res = await api.put(`/api/v1/report/${id}`, editForm);
+  return (
+    <Layout>
+      <div className="max-w-6xl mx-auto p-6">
+        <div className="flex justify-between mb-6">
+          <h1 className="text-3xl font-bold">Admin – Reports</h1>
 
-            // Preserve the user object from previous report
-            setReports(
-                reports.map((r) =>
-                    r.id === id ? { ...res.data.report, user: r.user } : r
-                )
-            );
+          <div className="flex gap-3">
+            <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value as FilterType)}
+              className="rounded-xl border px-4 py-2"
+            >
+              <option value="daily-reports">Daily Reports</option>
+              <option value="daily-summary">Daily Summary</option>
+              <option value="weekly-summary">Weekly Summary</option>
+              <option value="monthly-summary">Monthly Summary</option>
+            </select>
 
-            setEditingId(null);
-            alert("Report updated successfully");
-        } catch (err: any) {
-            console.error("Failed to update report:", err);
-            alert(err.response?.data?.message || "Failed to update report");
-        } finally {
-            setSavingId(null); // done saving
-        }
-    };
+            {filter !== "daily-reports" && (
+              <button
+                onClick={() =>
+                  generateSummary(
+                    filter.includes("weekly")
+                      ? "weekly"
+                      : filter.includes("monthly")
+                      ? "monthly"
+                      : "daily"
+                  )
+                }
+                className="px-4 py-2 bg-green-600 text-white rounded-xl"
+              >
+                Generate Summary
+              </button>
+            )}
+          </div>
+        </div>
 
-
-
-    const deleteReport = async (id: string) => {
-        if (!confirm("Are you sure you want to delete this report?")) return;
-
-        try {
-            await api.delete(`/api/v1/report/${id}`);
-            setReports(reports.filter((r) => r.id !== id));
-            alert("Report deleted successfully");
-        } catch (err: any) {
-            console.error("Failed to delete report:", err);
-            alert(err.response?.data?.message || "Failed to delete report");
-        }
-    };
-
-    useEffect(() => {
-        fetchReports();
-    }, []);
-
-    if (loading) return <p className="p-6 text-slate-500">Loading reports...</p>;
-    if (reports.length === 0) return <p className="p-6 text-slate-500">No reports found.</p>;
-
-    return (
-        <Layout>
-            <div className="max-w-6xl mx-auto p-6">
-                <h1 className="text-3xl font-bold text-slate-800 mb-6">Admin - Daily Reports</h1>
-
-                <div className="space-y-6">
-                    {reports.map((report) =>
-                        editingId === report.id ? (
-                            // ---------------- EDIT FORM ----------------
-                            <div key={report.id} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
-                                {/* Date */}
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Date</label>
-                                    <input
-                                        type="date"
-                                        value={editForm.date}
-                                        onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
-                                        className="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                                    />
-                                </div>
-
-                                {/* Title */}
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Title</label>
-                                    <input
-                                        type="text"
-                                        value={editForm.title}
-                                        onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                                        className="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                                    />
-                                </div>
-
-                                {/* Tasks */}
-                                <Section title="Tasks Completed">
-                                    <RichTextEditor
-                                        value={editForm.tasks}
-                                        onChange={(v) => setEditForm({ ...editForm, tasks: v })}
-                                    />
-                                </Section>
-
-                                {/* Challenges */}
-                                <Section title="Challenges / Issues">
-                                    <RichTextEditor
-                                        value={editForm.challenges}
-                                        onChange={(v) => setEditForm({ ...editForm, challenges: v })}
-                                    />
-                                </Section>
-
-                                {/* Next Plan */}
-                                <Section title="Plan for Next Day">
-                                    <RichTextEditor
-                                        value={editForm.nextPlan}
-                                        onChange={(v) => setEditForm({ ...editForm, nextPlan: v })}
-                                    />
-                                </Section>
-
-                                {/* Action Buttons */}
-                                <div className="flex gap-3 justify-end">
-                                    <button
-                                        onClick={cancelEditing}
-                                        className="px-4 py-2 rounded-xl bg-gray-400 text-white hover:bg-gray-500"
-                                    >
-                                        Cancel
-                                    </button>
-
-                                    <button
-                                        onClick={() => saveEdit(report.id)}
-                                        className="px-4 py-2 rounded-xl bg-sky-600 text-white hover:bg-sky-700"
-                                        disabled={savingId === report.id}
-                                    >
-                                        {savingId === report.id ? "Updating..." : "Save"}
-                                    </button>
-                                </div>
-                            </div>
-                        ) : (
-                            // ---------------- VIEW REPORT ----------------
-                            <div
-                                key={report.id}
-                                className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition flex justify-between items-center"
-                            >
-                                <div>
-                                    <h2 className="text-xl font-semibold text-slate-800">{report.title}</h2>
-                                    <p className="text-sm text-slate-500">
-                                        Reporter: {report.user.name} | Date: {new Date(report.date).toLocaleDateString()}
-                                    </p>
-                                </div>
-                                <div className="flex gap-3">
-                                    <button
-                                        onClick={() => startEditing(report)}
-                                        className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        onClick={() => deleteReport(report.id)}
-                                        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
-                            </div>
-                        )
-                    )}
+        <div className="space-y-6">
+          {records.map((r) =>
+            editingId === r.id && filter === "daily-reports" ? (
+              <div key={r.id} className="bg-white p-6 rounded-xl">
+                <RichTextEditor
+                  value={editForm.tasks}
+                  onChange={(v) => setEditForm({ ...editForm, tasks: v })}
+                />
+                <button
+                  onClick={() => saveEdit(r.id)}
+                  className="mt-3 bg-sky-600 text-white px-4 py-2 rounded"
+                >
+                  Save
+                </button>
+              </div>
+            ) : (
+              <div
+                key={r.id}
+                className="bg-white border rounded-xl p-6 flex justify-between"
+              >
+                <div>
+                  <h2 className="font-semibold">{r.title}</h2>
+                  <p className="text-sm text-gray-500">
+                    {r.user?.name} · {new Date(r.date).toLocaleDateString()}
+                  </p>
                 </div>
-            </div>
-        </Layout>
-    );
-}
 
-/* ---------------- SUB COMPONENT ---------------- */
-const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <div>
-        <h3 className="text-sm font-medium text-slate-700 mb-2">{title}</h3>
-        {children}
-    </div>
-);
+                {filter === "daily-reports" && (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => startEditing(r)}
+                      className="px-3 py-1 bg-yellow-500 text-white rounded"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteReport(r.id)}
+                      className="px-3 py-1 bg-red-500 text-white rounded"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+            )
+          )}
+        </div>
+      </div>
+    </Layout>
+  );
+}
