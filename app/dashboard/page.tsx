@@ -47,8 +47,8 @@ const Dashboard = () => {
   const [totalMilk, setTotalMilk] = useState(0);
   const [prevTotalMilk, setPrevTotalMilk] = useState(0);
   const [animalsMilked, setAnimalsMilked] = useState(0);
-  const [avgPerAnimal, setAvgPerAnimal] = useState<Number>(0);
-  const [avgMilkingDays, setAvgMilkingDays] = useState<Number>(0);
+  const [avgPerAnimal, setAvgPerAnimal] = useState<number>(0);
+  const [avgMilkingDays, setAvgMilkingDays] = useState<number>(0);
   const [filteredAnimalStats, setFilteredAnimalStats] = useState<{ daysMilked: number; totalMilk: number } | null>(null);
   const [filterRange, setFilterRange] = useState("day");
   const [animalFilter, setAnimalFilter] = useState("");
@@ -120,7 +120,7 @@ useEffect(() => {
         );
 
         setAnimalsMilked(Number(data.animalsMilked ?? 0));
-        setAvgPerAnimal(Number(data.avgPerAnimal));
+        setAvgPerAnimal(Number(data.avgPerAnimal ?? 0));
 
         // Daily trend chart
 
