@@ -119,8 +119,8 @@ useEffect(() => {
           )
         );
 
-        setAnimalsMilked(data.animalsMilked);
-        setAvgPerAnimal(data.avgPerAnimal);
+        setAnimalsMilked(Number(data.animalsMilked ?? 0));
+        setAvgPerAnimal(Number(data.avgPerAnimal));
 
         // Daily trend chart
 
