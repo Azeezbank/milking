@@ -11,7 +11,7 @@ interface SidebarProps {
 }
 
 export const AdminSidebar = ({ isMenu, setIsMenu }: SidebarProps) => {
-  const [isPermisible, setIsPermisible] = useState(true);
+  const [isPermisible, setIsPermisible] = useState(false);
     // Fetch user info
   useEffect(() => {
   const fetchUserInfo = async () => {
@@ -23,7 +23,7 @@ export const AdminSidebar = ({ isMenu, setIsMenu }: SidebarProps) => {
       if (
         user.superRole === "Admin"
       ) {
-        setIsPermisible(false);
+        setIsPermisible(true);
       } else {
         setIsPermisible(false);
       }
@@ -112,8 +112,8 @@ export const AdminSidebar = ({ isMenu, setIsMenu }: SidebarProps) => {
         </Link>
         {isPermisible && (
         <Link href="/report/aigenerate">
-          <div className="flex items-center text-white gap-2 py-3 px-2 rounded hover:bg-sky-600 cursor-pointer">
-            <Barcode size={15} className="text-white" />
+          <div className="flex items-center gap-2 py-3 px-2 rounded hover:bg-sky-600 cursor-pointer">
+            <Barcode size={15} className="text-sky-500" />
             <span className="font-semibold text-sm">Generate Report Summary</span>
           </div>
         </Link>
