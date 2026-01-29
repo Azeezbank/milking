@@ -11,7 +11,7 @@ interface SidebarProps {
 }
 
 export const AdminSidebar = ({ isMenu, setIsMenu }: SidebarProps) => {
-  const [isPermisible, setIsPermisible] = useState(false);
+  const [isPermisible, setIsPermisible] = useState(true);
     // Fetch user info
   useEffect(() => {
   const fetchUserInfo = async () => {
