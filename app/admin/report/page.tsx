@@ -126,10 +126,13 @@ export default function AdminReportsPage() {
   };
 
   /* ---------------- RENDER ---------------- */
-  if (loading) return <p className="p-6">Loading...</p>;
+  //if (loading) return <p className="p-6">Loading...</p>;
 
   return (
     <Layout>
+      {loading ? (
+      <p className="p-6">Loading...</p>
+      ) : (
       <div className="max-w-6xl mx-auto p-6">
         <div className="flex justify-between mb-6">
           <h1 className="text-3xl font-bold">Admin – Reports</h1>
@@ -213,6 +216,7 @@ export default function AdminReportsPage() {
           )}
         </div>
       </div>
+      )}
     </Layout>
   );
 }
