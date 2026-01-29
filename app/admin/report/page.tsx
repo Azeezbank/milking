@@ -55,12 +55,15 @@ export default function AdminReportsPage() {
       }
 
       // 🔹 AI SUMMARIES
+
       const type =
-        filter === "daily-summary"
-          ? "daily"
-          : filter === "weekly-summary"
-          ? "weekly"
-          : "monthly";
+  filter === "daily-summary"
+    ? "Daily"
+    : filter === "weekly-summary"
+    ? "Weekly"
+    : filter === "monthly-summary" // ✅ correct
+    ? "Monthly"
+    : null;
 
       res = await api.get("/api/v1/report/summary", {
         params: { type },
