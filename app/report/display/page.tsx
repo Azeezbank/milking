@@ -171,27 +171,32 @@ export default function ReportsListPage() {
       }
 
       // 🔹 AI SUMMARY TABLE
-     const summaryType =
-      filter === "daily" || filter === "weekly" || filter === "monthly"
-        ? filter
-        : null;
 
-    if (!summaryType) return;
+      const summaryType =
+        filter === "daily"
+          ? "Daily"
+          : filter === "weekly"
+            ? "Weekly"
+            : filter === "monthly" // ✅ correct
+              ? "Monthly"
+              : null;
 
-    res = await api.get("/api/v1/report/summary", {
-      params: { type: summaryType },
-    });
+      if (!summaryType) return;
+
+      res = await api.get("/api/v1/report/summary", {
+        params: { type: summaryType },
+      });
 
       setReports(
         res.data.length
           ? res.data.map((summary: any) => ({
-              id: summary.id,
-              title: `${filter.charAt(0).toUpperCase() + filter.slice(1)} Summary`,
-              tasks: summary.content,
-              date: summary.startDate,
-              createdAt: summary.createdAt,
-              user: { name: "AI Summary" },
-            }))
+            id: summary.id,
+            title: `${filter.charAt(0).toUpperCase() + filter.slice(1)} Summary`,
+            tasks: summary.content,
+            date: summary.startDate,
+            createdAt: summary.createdAt,
+            user: { name: "AI Summary" },
+          }))
           : []
       );
     } catch (error) {
@@ -229,10 +234,9 @@ export default function ReportsListPage() {
               key={btn.key}
               onClick={() => setFilter(btn.key as FilterType)}
               className={`px-4 py-2 rounded-xl font-medium transition
-                ${
-                  filter === btn.key
-                    ? "bg-sky-600 text-white"
-                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                ${filter === btn.key
+                  ? "bg-sky-600 text-white"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                 }`}
             >
               {btn.label}

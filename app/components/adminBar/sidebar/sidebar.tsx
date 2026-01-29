@@ -2,6 +2,8 @@
 "use client";
 import { Pointer, X, Users, Calendar, FileText, Bell, Activity, User2, CalendarClock, Barcode, FileText as ReportsIcon } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import api from "@/app/components/services/api";
 
 interface SidebarProps {
   isMenu: boolean;
@@ -9,9 +11,33 @@ interface SidebarProps {
 }
 
 export const AdminSidebar = ({ isMenu, setIsMenu }: SidebarProps) => {
+  const [isPermisible, setIsPermisible] = useState(false);
+    // Fetch user info
+  useEffect(() => {
+  const fetchUserInfo = async () => {
+    try {
+      const res = await api.get("/api/v1/admin/users/my/info");
+      const user = res.data.user;
+
+      // Check permission
+      if (
+        user.superRole === "Admin"
+      ) {
+        setIsPermisible(true);
+      } else {
+        setIsPermisible(false);
+      }
+    } catch (err) {
+      console.error("Failed to fetch user info:", err);
+      setIsPermisible(false); // fallback
+    }
+  };
+
+  fetchUserInfo();
+}, []);
   return (
     <div
-      className={`px-5 w-64 bg-gray-50 h-screen overflow-y-auto transition-transform duration-700 ease-in-out fixed ${
+      className={`px-5 z-10 w-64 bg-gray-50 h-screen overflow-y-auto transition-transform duration-700 ease-in-out fixed ${
         isMenu ? "translate-x-0" : "-translate-x-64"
       }`}
     >
@@ -84,6 +110,14 @@ export const AdminSidebar = ({ isMenu, setIsMenu }: SidebarProps) => {
             <span className="font-semibold text-sm">Main Dashboard</span>
           </div>
         </Link>
+        {isPermisible && (
+        <Link href="/report/aigenerate">
+          <div className="flex items-center text-white gap-2 py-3 px-2 rounded hover:bg-sky-600 cursor-pointer">
+            <Barcode size={15} className="text-white" />
+            <span className="font-semibold text-sm">Main Dashboard</span>
+          </div>
+        </Link>
+        )}
       </nav>
     </div>
   );

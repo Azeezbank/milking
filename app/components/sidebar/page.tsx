@@ -16,7 +16,7 @@ export const Sidebar = ({ isMenu, setIsMenu }: Menu) => {
   useEffect(() => {
   const fetchUserInfo = async () => {
     try {
-      const res = await api.get("/api/v1/admin/users/my/info");
+      const res = await api.get("/api/v1/users/my/info");
       const user = res.data.user;
 
       // Check permission

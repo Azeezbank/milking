@@ -78,7 +78,7 @@ useEffect(() => {
 useEffect(() => {
   const fetchUserInfo = async () => {
     try {
-      const res = await api.get("/api/v1/admin/users/my/info"); // token sent automatically
+      const res = await api.get("/api/v1/users/my/info"); // token sent automatically
       const user = res.data.user;
 
       setUserName(user.username);
@@ -145,7 +145,6 @@ useEffect(() => {
   }, [filterRange, animalFilter]);
 
   const percentChange = prevTotalMilk ? (((totalMilk - prevTotalMilk) / prevTotalMilk) * 100).toFixed(1) : "0";
-  const shortName = userName.split(" ").slice(0, 2).join(" ");
   const absoluteChange = totalMilk - prevTotalMilk;
   const performanceIndex =
     prevTotalMilk > 0
@@ -165,7 +164,7 @@ useEffect(() => {
         <div className="flex justify-between items-start md:items-center">
           <div>
             <span className="inline-block bg-linear-to-r from-sky-500 to-blue-600 text-white px-4 py-1 rounded-full text-sm">
-              Welcome, {shortName} 👋
+              Welcome, {userName} 👋
             </span>
             <p className="text-gray-500 text-xs mt-1">
               {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
