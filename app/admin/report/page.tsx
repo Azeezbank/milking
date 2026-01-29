@@ -125,8 +125,6 @@ export default function AdminReportsPage() {
     alert("Summary generated");
   };
 
-  /* ---------------- RENDER ---------------- */
-  //if (loading) return <p className="p-6">Loading...</p>;
 
   return (
     <Layout>
