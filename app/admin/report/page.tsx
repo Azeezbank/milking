@@ -9,7 +9,7 @@ interface Report {
   id: string;
   title: string;
   tasks: string;
-  date: string; // formatted date or range
+  date: string;
   createdAt: string;
   user?: {
     name: string;
@@ -37,7 +37,7 @@ export default function AdminReportsPage() {
     date: "",
   });
 
-  /* ---------------- DATE FORMATTER ---------------- */
+  /* ---------------- DATE FORMAT ---------------- */
   const formatRange = (
     type: "Daily" | "Weekly" | "Monthly",
     start: string,
@@ -47,7 +47,6 @@ export default function AdminReportsPage() {
     const e = new Date(end);
 
     if (type === "Daily") return s.toLocaleDateString();
-
     return `${s.toLocaleDateString()} – ${e.toLocaleDateString()}`;
   };
 
@@ -55,7 +54,7 @@ export default function AdminReportsPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // 🔹 DAILY REPORTS
+      // DAILY REPORTS
       if (filter === "daily-reports") {
         const res = await api.get("/api/v1/report", {
           params: { range: "daily" },
@@ -74,7 +73,7 @@ export default function AdminReportsPage() {
         return;
       }
 
-      // 🔹 AI SUMMARY TYPE
+      // AI SUMMARY
       const type =
         filter === "daily-summary"
           ? "Daily"
@@ -108,7 +107,7 @@ export default function AdminReportsPage() {
     fetchData();
   }, [filter]);
 
-  /* ---------------- EDIT ---------------- */
+  /* ---------------- EDIT DAILY REPORT ---------------- */
   const startEditing = (r: Report) => {
     setEditingId(r.id);
     setEditForm({
@@ -120,7 +119,7 @@ export default function AdminReportsPage() {
     });
   };
 
-const saveEdit = async (id: string) => {
+  const saveEdit = async (id: string) => {
     try {
       setSavingId(id);
       const res = await api.put(`/api/v1/report/${id}`, editForm);
@@ -132,10 +131,18 @@ const saveEdit = async (id: string) => {
     }
   };
 
+    /* ---------------- DELETE DAILY REPORT ---------------- */
   const deleteReport = async (id: string) => {
-    if (!confirm("Delete report?")) return;
+    if (!confirm("Delete this report?")) return;
     await api.delete(`/api/v1/report/${id}`);
-    setRecords(records.filter((r) => r.id !== id));
+    fetchData();
+  };
+
+  /* ---------------- DELETE AI SUMMARY ---------------- */
+  const deleteSummary = async (id: string) => {
+    if (!confirm("Delete this summary? This action cannot be undone.")) return;
+    await api.delete(`/api/v1/admin/summary/${id}`);
+    fetchData();
   };
 
   /* ---------------- GENERATE SUMMARY ---------------- */
@@ -185,8 +192,6 @@ const saveEdit = async (id: string) => {
               )}
             </div>
           </div>
-
-
           <div className="space-y-6">
             {records.map((r) =>
               editingId === r.id && filter === "daily-reports" ? (
@@ -215,22 +220,32 @@ const saveEdit = async (id: string) => {
                     </p>
                   </div>
 
-                  {filter === "daily-reports" && (
-                    <div className="flex gap-2">
+                  {/* ACTION BUTTONS */}
+                  <div className="flex gap-2">
+                    {filter === "daily-reports" ? (
+                      <>
+                        <button
+                          onClick={() => startEditing(r)}
+                          className="px-3 py-1 bg-yellow-500 text-white rounded"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => deleteReport(r.id)}
+                          className="px-3 py-1 bg-red-500 text-white rounded"
+                        >
+                          Delete
+                        </button>
+                      </>
+                    ) : (
                       <button
-                        onClick={() => startEditing(r)}
-                        className="px-3 py-1 bg-yellow-500 text-white rounded"
+                        onClick={() => deleteSummary(r.id)}
+                        className="px-3 py-1 bg-red-600 text-white rounded"
                       >
-                        Edit
+                        Delete Summary
                       </button>
-                      <button
-                        onClick={() => deleteReport(r.id)}
-                        className="px-3 py-1 bg-red-500 text-white rounded"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               )
             )}
