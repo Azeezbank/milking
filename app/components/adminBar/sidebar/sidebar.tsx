@@ -23,7 +23,7 @@ export const AdminSidebar = ({ isMenu, setIsMenu }: SidebarProps) => {
       if (
         user.superRole === "Admin"
       ) {
-        setIsPermisible(true);
+        setIsPermisible(false);
       } else {
         setIsPermisible(false);
       }
