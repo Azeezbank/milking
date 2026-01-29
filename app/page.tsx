@@ -347,9 +347,9 @@ export default function Home() {
             <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8">
               {[
                 "Banky",
-                "Jimi",
+                "Adejimi",
                 "Idris",
-                "Logbon",
+                "Oluwalogbon",
               ].map((name, index) => (
                 <div
                   key={index}
