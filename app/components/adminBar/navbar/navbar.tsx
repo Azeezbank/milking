@@ -17,7 +17,7 @@ export const AdminNavBar = ({ isMenu, setIsMenu }: AdminNavProps) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await api.get("/api/v1/admin/users/my/info");
+        const res = await api.get("/api/v1/users/my/info");
         const user = res.data.user;
 
         if (user.role === "Team Leader" || user.superRole === "Admin") {
