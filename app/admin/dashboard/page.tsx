@@ -23,7 +23,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await api.get("/api/v1/admin/users/my/info");
+        const res = await api.get("/api/v1/users/my/info");
         setTotalUsers(res.data.totalUser);
       } catch (err: any) {
         console.error("Failed to fetch user info:", err);
@@ -69,7 +69,7 @@ export default function AdminDashboard() {
       try {
         const res = await api.get("/api/v1/off/limit");
         if (res.status === 200) {
-          setMaxDays(res.data.maxDays);
+          setMaxDays(res.data.offLimit.maxDays);
         }
       } catch (err: any) {
         console.error("Failed to fetch off limit:", err);

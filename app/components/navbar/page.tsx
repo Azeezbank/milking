@@ -19,8 +19,8 @@ export const NavBar = ({ isMenu, setIsMenu }: Menu) => {
               alt="logo"
             />
             </div>
-            <div className="flex flex-col leading-tight">
-              <h2 className="text-sky-500 font-semibold text-base">CWAY FOOD AND BEVERAGES</h2>
+            <div className="flex flex-col items-center leading-tight">
+              <h2 className="text-sky-500 font-semibold text-base">CWAY DAIRY PORTAL</h2>
               <div className="flex items-center gap-1 text-sm text-red-500">
                 <span className="w-2 h-2 bg-red-500 rounded-full"></span>
                 <span>MILKING TEAM</span>

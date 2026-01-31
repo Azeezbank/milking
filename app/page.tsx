@@ -86,8 +86,8 @@ export default function Home() {
 
   return (
     <div>
-      <header className="bg-sky-500 fixed w-full z-5 py-2">
-        <nav className="flex gap-2 items-center px-10">
+      <header className="bg-sky-500 fixed w-full z-5 py-2 md:px-20">
+        <nav className="flex gap-2 items-center px-10 md:px-0">
           <div className="bg-gray-50 m-2 p-1 rounded-lg">
             <img src={'https://cdn.thenationonlineng.net/wp-content/uploads/2023/07/25040548/CWAY.png'} alt="Logo" className="w-13 rounded-lg" />
           </div>

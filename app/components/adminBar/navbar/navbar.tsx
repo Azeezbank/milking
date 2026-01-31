@@ -17,7 +17,7 @@ export const AdminNavBar = ({ isMenu, setIsMenu }: AdminNavProps) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await api.get("/api/v1/admin/users/my/info");
+        const res = await api.get("/api/v1/users/my/info");
         const user = res.data.user;
 
         if (user.role === "Team Leader" || user.superRole === "Admin") {
@@ -47,11 +47,11 @@ export const AdminNavBar = ({ isMenu, setIsMenu }: AdminNavProps) => {
             alt="logo"
           />
           </div>
-          <div className="flex flex-col">
-            <h2 className="text-sky-500 font-bold">CWAY Admin Portal</h2>
+          <div className="flex flex-col items-center">
+            <h2 className="text-sky-500 font-bold">CWAY ADNIN PORTAL</h2>
             <p className="text-sm text-gray-500 flex items-center gap-1">
               <span className="bg-red-500 w-2 h-2 rounded-full"></span>
-              MILKING TEAM
+              <span className="text-red-500">MILKING TEAM</span>
               <span className="bg-red-500 w-2 h-2 rounded-full"></span>
             </p>
           </div>
