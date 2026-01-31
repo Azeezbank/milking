@@ -97,7 +97,7 @@ export const AdminSidebar = ({ isMenu, setIsMenu }: SidebarProps) => {
           </div>
         </Link>
 
-        <Link href="/admin/notifications">
+        <Link href="#">
           <div className="flex items-center gap-2 py-3 px-2 rounded hover:bg-sky-100 cursor-pointer">
             <Bell size={15} className="text-sky-500" />
             <span className="font-semibold text-sm">Notifications</span>
