@@ -111,10 +111,10 @@ export const AdminSidebar = ({ isMenu, setIsMenu }: SidebarProps) => {
           </div>
         </Link>
         {isPermisible && (
-        <Link href="/report/aigenerate">
-          <div className="flex items-center text-white gap-2 py-3 px-2 rounded hover:bg-sky-600 cursor-pointer">
-            <Barcode size={15} className="text-white" />
-            <span className="font-semibold text-sm">Main Dashboard</span>
+        <Link href="/admin/report/aigenerate">
+          <div className="flex items-center gap-2 py-3 px-2 rounded hover:bg-sky-600 cursor-pointer">
+            <Barcode size={15} className="text-sky-500" />
+            <span className="font-semibold text-sm">Generate Report Summary</span>
           </div>
         </Link>
         )}

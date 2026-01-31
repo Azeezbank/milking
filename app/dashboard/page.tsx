@@ -2,8 +2,6 @@
 "use client";
 
 import Layout from "../components/layout/page";
-import axios from "axios";
-import backendUrl from "@/app/config";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import api from "@/app/components/services/api";

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -10,8 +9,6 @@ interface Report {
   id: string;
   title: string;
   tasks: string;
-  challenges?: string;
-  nextPlan?: string;
   date: string;
   createdAt: string;
   user?: {
@@ -30,7 +27,6 @@ export default function AdminReportsPage() {
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
-
   const [filter, setFilter] = useState<FilterType>("daily-reports");
 
   const [editForm, setEditForm] = useState({
@@ -41,37 +37,60 @@ export default function AdminReportsPage() {
     date: "",
   });
 
+  /* ---------------- DATE FORMAT ---------------- */
+  const formatRange = (
+    type: "Daily" | "Weekly" | "Monthly",
+    start: string,
+    end: string
+  ) => {
+    const s = new Date(start);
+    const e = new Date(end);
+
+    if (type === "Daily") return s.toLocaleDateString();
+    return `${s.toLocaleDateString()} – ${e.toLocaleDateString()}`;
+  };
+
   /* ---------------- FETCH DATA ---------------- */
   const fetchData = async () => {
     setLoading(true);
     try {
-      let res;
-
-      // 🔹 DAILY REPORTS
+      // DAILY REPORTS
       if (filter === "daily-reports") {
-        res = await api.get("/api/v1/report", { params: { range: "daily" } });
-        setRecords(res.data.reports.day || []);
+        const res = await api.get("/api/v1/report", {
+          params: { range: "daily" },
+        });
+
+      setRecords(
+          (res.data.reports.day || []).map((r: any) => ({
+            id: r.id,
+            title: r.title,
+            tasks: r.tasks,
+            date: new Date(r.date).toLocaleDateString(),
+            createdAt: r.createdAt,
+            user: r.user,
+          }))
+        );
         return;
       }
 
-      // 🔹 AI SUMMARIES
+      // AI SUMMARY
       const type =
         filter === "daily-summary"
-          ? "daily"
+          ? "Daily"
           : filter === "weekly-summary"
-          ? "weekly"
-          : "monthly";
+          ? "Weekly"
+          : "Monthly";
 
-      res = await api.get("/api/v1/report/summary", {
+      const res = await api.get("/api/v1/report/summary", {
         params: { type },
       });
 
       setRecords(
         res.data.map((s: any) => ({
           id: s.id,
-          title: `${type.charAt(0).toUpperCase() + type.slice(1)} Summary`,
+          title: `${type} Summary`,
           tasks: s.content,
-          date: s.startDate,
+          date: formatRange(type, s.startDate, s.endDate),
           createdAt: s.createdAt,
           user: { name: "AI Summary" },
         }))
@@ -88,15 +107,15 @@ export default function AdminReportsPage() {
     fetchData();
   }, [filter]);
 
-  /* ---------------- EDIT REPORT ---------------- */
+  /* ---------------- EDIT DAILY REPORT ---------------- */
   const startEditing = (r: Report) => {
     setEditingId(r.id);
     setEditForm({
       title: r.title,
       tasks: r.tasks,
-      challenges: r.challenges || "",
-      nextPlan: r.nextPlan || "",
-      date: r.date.split("T")[0],
+      challenges: "",
+      nextPlan: "",
+      date: "",
     });
   };
 
@@ -112,10 +131,18 @@ export default function AdminReportsPage() {
     }
   };
 
+    /* ---------------- DELETE DAILY REPORT ---------------- */
   const deleteReport = async (id: string) => {
-    if (!confirm("Delete report?")) return;
+    if (!confirm("Delete this report?")) return;
     await api.delete(`/api/v1/report/${id}`);
-    setRecords(records.filter((r) => r.id !== id));
+    fetchData();
+  };
+
+  /* ---------------- DELETE AI SUMMARY ---------------- */
+  const deleteSummary = async (id: string) => {
+    if (!confirm("Delete this summary? This action cannot be undone.")) return;
+    await api.delete(`/api/v1/admin/summary/${id}`);
+    fetchData();
   };
 
   /* ---------------- GENERATE SUMMARY ---------------- */
@@ -123,97 +150,108 @@ export default function AdminReportsPage() {
     if (!confirm(`Generate ${type} summary?`)) return;
     await api.post(`/api/v1/admin/summary/${type}`);
     alert("Summary generated");
+    fetchData();
   };
 
   return (
     <Layout>
-    {loading ? (
-       <p className="p-6">Loading...</p>
-    ) : (
-      <div className="max-w-6xl mx-auto p-6">
-        <div className="flex justify-between mb-6">
-          <h1 className="text-3xl font-bold">Admin – Reports</h1>
+      {loading ? (
+        <p className="p-6">Loading...</p>
+      ) : (
+        <div className="max-w-6xl mx-auto p-6">
+          <div className="flex justify-between mb-6">
+            <h1 className="text-3xl font-bold">Admin – Reports</h1>
 
-          <div className="flex gap-3">
-            <select
-              value={filter}
-              onChange={(e) => setFilter(e.target.value as FilterType)}
-              className="rounded-xl border px-4 py-2"
-            >
-              <option value="daily-reports">Daily Reports</option>
-              <option value="daily-summary">Daily Summary</option>
-              <option value="weekly-summary">Weekly Summary</option>
-              <option value="monthly-summary">Monthly Summary</option>
-            </select>
-
-            {filter !== "daily-reports" && (
-              <button
-                onClick={() =>
-                  generateSummary(
-                    filter.includes("weekly")
-                      ? "weekly"
-                      : filter.includes("monthly")
-                      ? "monthly"
-                      : "daily"
-                  )
-                }
-                className="px-4 py-2 bg-green-600 text-white rounded-xl"
+            <div className="flex gap-3">
+              <select
+                value={filter}
+                onChange={(e) => setFilter(e.target.value as FilterType)}
+                className="rounded-xl border px-4 py-2"
               >
-                Generate Summary
-              </button>
+                <option value="daily-reports">Daily Reports</option>
+                <option value="daily-summary">Daily Summary</option>
+                <option value="weekly-summary">Weekly Summary</option>
+                <option value="monthly-summary">Monthly Summary</option>
+              </select>
+
+              {filter !== "daily-reports" && (
+                <button
+                  onClick={() =>
+                    generateSummary(
+                      filter.includes("weekly")
+                        ? "weekly"
+                        : filter.includes("monthly")
+                        ? "monthly"
+                        : "daily"
+                    )
+                  }
+                  className="px-4 py-2 bg-green-600 text-white rounded-xl"
+                >
+                  Generate Summary
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="space-y-6">
+            {records.map((r) =>
+              editingId === r.id && filter === "daily-reports" ? (
+                <div key={r.id} className="bg-white p-6 rounded-xl">
+                  <RichTextEditor
+                    value={editForm.tasks}
+                    onChange={(v) => setEditForm({ ...editForm, tasks: v })}
+                  />
+                  <button
+                    onClick={() => saveEdit(r.id)}
+                    disabled={savingId === r.id}
+                    className="mt-3 bg-sky-600 text-white px-4 py-2 rounded"
+                  >
+                    Save
+                  </button>
+                </div>
+              ) : (
+                <div
+                  key={r.id}
+                  className="bg-white border rounded-xl p-6 flex justify-between"
+                >
+                  <div>
+                    <h2 className="font-semibold">{r.title}</h2>
+                    <p className="text-sm text-gray-500">
+                      {r.user?.name} · {r.date}
+                    </p>
+                  </div>
+
+                  {/* ACTION BUTTONS */}
+                  <div className="flex gap-2">
+                    {filter === "daily-reports" ? (
+                      <>
+                        <button
+                          onClick={() => startEditing(r)}
+                          className="px-3 py-1 bg-yellow-500 text-white rounded"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => deleteReport(r.id)}
+                          className="px-3 py-1 bg-red-500 text-white rounded"
+                        >
+                          Delete
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={() => deleteSummary(r.id)}
+                        className="px-3 py-1 bg-red-600 text-white rounded"
+                      >
+                        Delete Summary
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )
             )}
           </div>
         </div>
-
-        <div className="space-y-6">
-          {records.map((r) =>
-            editingId === r.id && filter === "daily-reports" ? (
-              <div key={r.id} className="bg-white p-6 rounded-xl">
-                <RichTextEditor
-                  value={editForm.tasks}
-                  onChange={(v) => setEditForm({ ...editForm, tasks: v })}
-                />
-                <button
-                  onClick={() => saveEdit(r.id)}
-                  className="mt-3 bg-sky-600 text-white px-4 py-2 rounded"
-                >
-                  Save
-                </button>
-              </div>
-            ) : (
-              <div
-                key={r.id}
-                className="bg-white border rounded-xl p-6 flex justify-between"
-              >
-                <div>
-                  <h2 className="font-semibold">{r.title}</h2>
-                  <p className="text-sm text-gray-500">
-                    {r.user?.name} · {new Date(r.date).toLocaleDateString()}
-                  </p>
-                </div>
-
-                {filter === "daily-reports" && (
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => startEditing(r)}
-                      className="px-3 py-1 bg-yellow-500 text-white rounded"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => deleteReport(r.id)}
-                      className="px-3 py-1 bg-red-500 text-white rounded"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </div>
-            )
-          )}
-        </div>
-      </div>
-    )}
+      )}
     </Layout>
   );
 }
