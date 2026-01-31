@@ -19,7 +19,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "CWAY Milking Team",
+  title: "CWAY MILKING TEAM",
   description: "A smart system to track attendance, milk yield, overtime, and daily records",
     icons: {
     icon: "/CWAY-Group.ico",
