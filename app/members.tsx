@@ -14,6 +14,11 @@ export const members = [
     image: "https://i.pravatar.cc/300",
     role: "Team Member"
   },
+  {
+    name: "Adah",
+    image: "https://i.pravatar.cc/300",
+    role: "Team Member"
+  },
 //   {
 //     // name: "Abdulradheed",
 //     // image: "/laborers/musa.jpg",

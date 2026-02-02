@@ -1,6 +1,6 @@
 
 "use client";
-import { Pointer, X, Users, Calendar, FileText, Bell, Activity, User2, CalendarClock, Barcode, FileText as ReportsIcon } from "lucide-react";
+import { Pointer, X, Users, Calendar, ClipboardList, Bell, Activity, User2, CalendarClock, Barcode, FileText as ReportsIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import api from "@/app/components/services/api";
@@ -79,6 +79,13 @@ export const AdminSidebar = ({ isMenu, setIsMenu }: SidebarProps) => {
           <div className="flex items-center gap-2 py-3 px-2 rounded hover:bg-sky-100 cursor-pointer">
             <User2 size={15} className="text-sky-500" />
             <span className="font-semibold text-sm">Register Milking Animal</span>
+          </div>
+        </Link>
+
+        <Link href="/admin/milkrecord">
+          <div className="flex items-center gap-2 py-3 px-2 rounded hover:bg-sky-100 cursor-pointer">
+            <ClipboardList size={15} className="text-sky-500" />
+            <span className="font-semibold text-sm">Manage Milk Record</span>
           </div>
         </Link>
         
