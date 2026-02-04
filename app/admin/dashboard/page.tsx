@@ -69,7 +69,7 @@ export default function AdminDashboard() {
       try {
         const res = await api.get("/api/v1/off/limit");
         if (res.status === 200) {
-          setMaxDays(res.data.offLimit.maxDays);
+          setMaxDays(res.data.maxDays);
         }
       } catch (err: any) {
         console.error("Failed to fetch off limit:", err);
